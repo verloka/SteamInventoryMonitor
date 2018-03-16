@@ -1,0 +1,44 @@
+[
+  {
+    "AppID": "753",
+    "AppContext": 6,
+    "IconURL": null,
+    "IconPath": "Icons/steam.png",
+    "Name": "Steam"
+  },
+  {
+    "AppID": "730",
+    "AppContext": 2,
+    "IconURL": null,
+    "IconPath": "Icons/csgo.png",
+    "Name": "Counter-Strike: Global Offensive"
+  },
+  {
+    "AppID": "570",
+    "AppContext": 2,
+    "IconURL": null,
+    "IconPath": "Icons/dota.png",
+    "Name": "Dota 2"
+  },
+  {
+    "AppID": "440",
+    "AppContext": 2,
+    "IconURL": null,
+    "IconPath": "Icons/tf.png",
+    "Name": "Team Fortress 2"
+  },
+  {
+    "AppID": "578080",
+    "AppContext": 2,
+    "IconURL": null,
+    "IconPath": "Icons/pubg.png",
+    "Name": "PLAYERUNKNOWN'S BATTLEGROUNDS"
+  },
+  {
+    "AppID": "304930",
+    "AppContext": 2,
+    "IconURL": null,
+    "IconPath": "Icons/unturned.png",
+    "Name": "Unturned"
+  }
+]

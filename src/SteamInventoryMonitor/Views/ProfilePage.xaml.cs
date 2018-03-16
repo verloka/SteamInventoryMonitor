@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
+using SteamInventoryMonitor.Controlls;
 using SteamInventoryMonitor.Core;
 using SteamInventoryMonitor.Core.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,10 +27,8 @@ namespace SteamInventoryMonitor.Views
             InitializeComponent();
         }
 
-        void LoadSteamInventoryItemsCount()
+        int GetInventoryItemsCount(string appid, int appcontext)
         {
-            string appid = "753"; //steam
-            int appcontext = 6;
             int count = 1;
 
             string str = $"http://steamcommunity.com/inventory/{Player.steamid}/{appid}/{appcontext}?l={App.LANGUAGE}&count={count}";
@@ -38,100 +38,10 @@ namespace SteamInventoryMonitor.Views
                 Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
 
                 if (inv.Success)
-                {
-                    tbSteamItemCount.Text = inv.total_inventory_count.ToString();
-                }
+                    return inv.total_inventory_count;
             }
-        }
-        void LoadCSGOInventoryItemsCount()
-        {
-            string appid = "730"; //csgo
-            int appcontext = 2;
-            int count = 1;
 
-            string str = $"http://steamcommunity.com/inventory/{Player.steamid}/{appid}/{appcontext}?l={App.LANGUAGE}&count={count}";
-
-            using (WebClient wc = new WebClient())
-            {
-                Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
-
-                if (inv.Success)
-                {
-                    tbCSGOInv.Text = inv.total_inventory_count.ToString();
-                }
-            }
-        }
-        void LoadDotaInventoryItemsCount()
-        {
-            string appid = "570"; //dota 2
-            int appcontext = 2;
-            int count = 1;
-
-            string str = $"http://steamcommunity.com/inventory/{Player.steamid}/{appid}/{appcontext}?l={App.LANGUAGE}&count={count}";
-
-            using (WebClient wc = new WebClient())
-            {
-                Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
-
-                if (inv.Success)
-                {
-                    tbDotaInv.Text = inv.total_inventory_count.ToString();
-                }
-            }
-        }
-        void LoadTFInventoryItemsCount()
-        {
-            string appid = "440"; //tf 2
-            int appcontext = 2;
-            int count = 1;
-
-            string str = $"http://steamcommunity.com/inventory/{Player.steamid}/{appid}/{appcontext}?l={App.LANGUAGE}&count={count}";
-
-            using (WebClient wc = new WebClient())
-            {
-                Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
-
-                if (inv.Success)
-                {
-                    tbTFInv.Text = inv.total_inventory_count.ToString();
-                }
-            }
-        }
-        void LoadPBGInventoryItemsCount()
-        {
-            string appid = "578080"; //pbg
-            int appcontext = 2;
-            int count = 1;
-
-            string str = $"http://steamcommunity.com/inventory/{Player.steamid}/{appid}/{appcontext}?l={App.LANGUAGE}&count={count}";
-
-            using (WebClient wc = new WebClient())
-            {
-                Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
-
-                if (inv.Success)
-                {
-                    tbPBGInv.Text = inv.total_inventory_count.ToString();
-                }
-            }
-        }
-        void LoadUnturnedInventoryItemsCount()
-        {
-            string appid = "304930"; //unturned
-            int appcontext = 2;
-            int count = 1;
-
-            string str = $"http://steamcommunity.com/inventory/{Player.steamid}/{appid}/{appcontext}?l={App.LANGUAGE}&count={count}";
-
-            using (WebClient wc = new WebClient())
-            {
-                Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
-
-                if (inv.Success)
-                {
-                    tbUnturnedInv.Text = inv.total_inventory_count.ToString();
-                }
-            }
+            return 0;
         }
         void SearchItem(string name, string lid = "")
         {
@@ -184,9 +94,6 @@ namespace SteamInventoryMonitor.Views
 
         private void PageLoaded(object sender, RoutedEventArgs e)
         {
-
-
-
             string url = $"http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={App.KEY}&steamids={App.ID64}";
 
             using (WebClient wc = new WebClient())
@@ -205,90 +112,54 @@ namespace SteamInventoryMonitor.Views
 
                     imgAva.Source = new BitmapImage(new Uri(Player.avatarmedium));
 
-                    LoadSteamInventoryItemsCount();
-                    LoadCSGOInventoryItemsCount();
-                    LoadDotaInventoryItemsCount();
-                    LoadTFInventoryItemsCount();
-                    LoadPBGInventoryItemsCount();
-                    LoadUnturnedInventoryItemsCount();
+                    Inventories = JsonConvert.DeserializeObject<List<InventoryObject>>(File.ReadAllText(App.INVENTORIES));
+
+                    foreach (var item in Inventories)
+                    {
+                        int c = GetInventoryItemsCount(item.AppID, item.AppContext);
+                        if (c > 0)
+                        {
+                            Controlls.InventoryButton ib = new Controlls.InventoryButton()
+                            {
+                                InventoryName = item.Name,
+                                InventoryIcon = $"{Directory.GetCurrentDirectory()}/{item.IconPath}",
+                                InventoryCount = c
+                            };
+                            ib.Click += InventoryClickClick;
+
+                            if (spInventories.Children.Count == 0)
+                            {
+                                searchAppid = item.AppID;
+                                searchAppcontext = item.AppContext;
+                                ib.InventoryCheked = true;
+                            }
+                            else
+                            {
+                                ib.Margin = new Thickness(20, 0, 0, 0);
+                                ib.InventoryCheked = false;
+                            }
+
+                            spInventories.Children.Add(ib);
+                        }
+                    }
                 }
             }
         }
+
         private void btnSearchItemClick(object sender, RoutedEventArgs e) => SearchItem(tbSearchItemName.Text);
         private void btnLogoutClick(object sender, RoutedEventArgs e) => App.MAIN_WINDOW.SetupViewMode(0);
-
-        private void InventoryButtonClick(object sender, MouseButtonEventArgs e)
+        private void InventoryClickClick(InventoryButton sender, string tag)
         {
-            switch ((sender as Grid).Name)
-            {
-                case "STEAM":
-                default:
-                    STEAM.Opacity = 1;
-                    CSGO.Opacity = .5;
-                    DOTA2.Opacity = .5;
-                    TF2.Opacity = .5;
-                    PUBG.Opacity = .5;
-                    UNTURNED.Opacity = .5;
+            foreach (var item in spInventories.Children)
+                (item as InventoryButton).InventoryCheked = false;
 
-                    searchAppid = "753";
-                    searchAppcontext = 6;
-                    break;
-                case "CSGO":
-                    STEAM.Opacity = .5;
-                    CSGO.Opacity = 1;
-                    DOTA2.Opacity = .5;
-                    TF2.Opacity = .5;
-                    PUBG.Opacity = .5;
-                    UNTURNED.Opacity = .5;
-
-                    searchAppid = "730";
-                    searchAppcontext = 2;
-                    break;
-                case "DOTA2":
-                    STEAM.Opacity = .5;
-                    CSGO.Opacity = .5;
-                    DOTA2.Opacity = 1;
-                    TF2.Opacity = .5;
-                    PUBG.Opacity = .5;
-                    UNTURNED.Opacity = .5;
-
-                    searchAppid = "570";
-                    searchAppcontext = 2;
-                    break;
-                case "TF2":
-                    STEAM.Opacity = .5;
-                    CSGO.Opacity = .5;
-                    DOTA2.Opacity = .5;
-                    TF2.Opacity = 1;
-                    PUBG.Opacity = .5;
-                    UNTURNED.Opacity = .5;
-
-                    searchAppid = "440";
-                    searchAppcontext = 2;
-                    break;
-                case "PUBG":
-                    STEAM.Opacity = .5;
-                    CSGO.Opacity = .5;
-                    DOTA2.Opacity = .5;
-                    TF2.Opacity = .5;
-                    PUBG.Opacity = 1;
-                    UNTURNED.Opacity = .5;
-
-                    searchAppid = "578080";
-                    searchAppcontext = 2;
-                    break;
-                case "UNTURNED":
-                    STEAM.Opacity = .5;
-                    CSGO.Opacity = .5;
-                    DOTA2.Opacity = .5;
-                    TF2.Opacity = .5;
-                    PUBG.Opacity = .5;
-                    UNTURNED.Opacity = 1;
-
-                    searchAppid = "304930";
-                    searchAppcontext = 2;
-                    break;
-            }
+            foreach (var item in Inventories)
+                if(item.Name == tag)
+                {
+                    searchAppid = item.AppID;
+                    searchAppcontext = item.AppContext;
+                    sender.InventoryCheked = true;
+                }
         }
     }
 }

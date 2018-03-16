@@ -43,50 +43,7 @@
                 <RowDefinition Height="64px"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="25,0" HorizontalAlignment="Center">
-                <Grid x:Name="STEAM" Width="64" Height="64" Cursor="Hand" UIElement.PreviewMouseDown="InventoryButtonClick">
-                    <Image Width="48" Height="48" Source="/SteamInventoryMonitor;component/Icons/steam.png"/>
-                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
-                        <Ellipse Fill="#EF5350" MinWidth="20" MinHeight="20"/>
-                        <TextBlock x:Name="tbSteamItemCount" Grid.Column="1" Text="0" FontSize="8" Foreground="White" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Grid>
-                </Grid>
-                <Grid x:Name="CSGO" Width="64" Height="64" Opacity=".5" Margin="20,0,0,0" Cursor="Hand" UIElement.PreviewMouseDown="InventoryButtonClick">
-                    <Image Width="48" Height="48" Source="/SteamInventoryMonitor;component/Icons/csgo.png"/>
-                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
-                        <Ellipse Fill="#EF5350" MinWidth="20" MinHeight="20"/>
-                        <TextBlock x:Name="tbCSGOInv" Grid.Column="1" Text="0" FontSize="8" Foreground="White" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Grid>
-                </Grid>
-                <Grid x:Name="DOTA2" Width="64" Height="64" Opacity=".5" Margin="20,0,0,0" Cursor="Hand" UIElement.PreviewMouseDown="InventoryButtonClick">
-                    <Image Width="48" Height="48" Source="/SteamInventoryMonitor;component/Icons/dota.png"/>
-                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
-                        <Ellipse Fill="#EF5350" MinWidth="20" MinHeight="20"/>
-                        <TextBlock x:Name="tbDotaInv" Grid.Column="1" Text="0" FontSize="8" Foreground="White" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Grid>
-                </Grid>
-                <Grid x:Name="TF2" Width="64" Height="64" Opacity=".5" Margin="20,0,0,0" Cursor="Hand" UIElement.PreviewMouseDown="InventoryButtonClick">
-                    <Image Width="48" Height="48" Source="/SteamInventoryMonitor;component/Icons/tf.png"/>
-                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
-                        <Ellipse Fill="#EF5350" MinWidth="20" MinHeight="20"/>
-                        <TextBlock x:Name="tbTFInv" Grid.Column="1" Text="0" FontSize="8" Foreground="White" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Grid>
-                </Grid>
-                <Grid x:Name="PUBG" Width="64" Height="64" Opacity=".5" Margin="20,0,0,0" Cursor="Hand" UIElement.PreviewMouseDown="InventoryButtonClick">
-                    <Image Width="48" Height="48" Source="/SteamInventoryMonitor;component/Icons/pubg.png"/>
-                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
-                        <Ellipse Fill="#EF5350" MinWidth="20" MinHeight="20"/>
-                        <TextBlock x:Name="tbPBGInv" Grid.Column="1" Text="0" FontSize="8" Foreground="White" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Grid>
-                </Grid>
-                <Grid x:Name="UNTURNED" Width="64" Height="64" Opacity=".5" Margin="20,0,0,0" Cursor="Hand" UIElement.PreviewMouseDown="InventoryButtonClick">
-                    <Image Width="48" Height="48" Source="/SteamInventoryMonitor;component/Icons/unturned.png"/>
-                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
-                        <Ellipse Fill="#EF5350" MinWidth="20" MinHeight="20"/>
-                        <TextBlock x:Name="tbUnturnedInv" Grid.Column="1" Text="0" FontSize="8" Foreground="White" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Grid>
-                </Grid>
-            </StackPanel>
+            <StackPanel x:Name="spInventories" Orientation="Horizontal" VerticalAlignment="Center" Margin="25,0" HorizontalAlignment="Left"/>
         </Grid>
         <Grid x:Name="gridItemSearch" Grid.Row="2">
             <Grid.RowDefinitions>
