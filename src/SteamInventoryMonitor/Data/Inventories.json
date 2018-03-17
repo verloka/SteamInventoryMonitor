@@ -35,6 +35,27 @@
     "Name": "PLAYERUNKNOWN'S BATTLEGROUNDS"
   },
   {
+    "AppID": "433850",
+    "AppContext": 1,
+    "IconURL": null,
+    "IconPath": "Icons/h1z1.png",
+    "Name": "H1Z1"
+  },
+  {
+    "AppID": "218620",
+    "AppContext": 2,
+    "IconURL": null,
+    "IconPath": "Icons/pd2.png",
+    "Name": "PAYDAY 2"
+  },
+  {
+    "AppID": "252490",
+    "AppContext": 2,
+    "IconURL": null,
+    "IconPath": "Icons/rust.png",
+    "Name": "Rust"
+  },
+  {
     "AppID": "304930",
     "AppContext": 2,
     "IconURL": null,

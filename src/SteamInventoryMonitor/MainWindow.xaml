@@ -18,7 +18,7 @@
         <Grid Background="#FF2D2D30">
             <Grid.RowDefinitions>
                 <RowDefinition Height="32px"/>
-                <RowDefinition Height="32px"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid x:Name="gridTitle" Background="#FF181818" MouseDown="DragWindow">
@@ -33,6 +33,39 @@
                 <Button x:Name="btnInfo" Grid.Column="2" Content="?" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnCloseWinodwClick"/>
                 <Button x:Name="btnCloseWinodw" Grid.Column="3" Content="X" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnCloseWinodwClick"/>
             </Grid>
+            <Menu Grid.Row="1" Background="#FF181818" Margin="0" Padding="0,10,0,0">
+                <MenuItem Header="File" Foreground="#FFC5C5C5" Template="{DynamicResource MetroMenuItemControlTemplate}" VerticalContentAlignment="Center">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8E5;" FontSize="12"/>
+                    </MenuItem.Icon>
+                    <MenuItem Header="Exit"/>
+                </MenuItem>
+                <MenuItem Header="Task" Foreground="#FFC5C5C5" Template="{DynamicResource MetroMenuItemControlTemplate}">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" FontSize="16"/>
+                    </MenuItem.Icon>
+                    <Separator/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Current state: "/>
+                        <TextBlock Text="empty" FontStyle="Italic"/>
+                    </StackPanel>
+                </MenuItem>
+                <MenuItem Header="Options" Foreground="#FFC5C5C5" Template="{DynamicResource MetroMenuItemControlTemplate}">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="12"/>
+                    </MenuItem.Icon>
+                    <CheckBox Content="Show empty inventory" VerticalContentAlignment="Center" FontSize="12" MinWidth="24" MinHeight="24" BorderThickness="1" />
+                    <CheckBox Content="Caching images" VerticalContentAlignment="Center" FontSize="12" MinWidth="24" MinHeight="24"/>
+                    <CheckBox Content="Startup with Windows" VerticalContentAlignment="Center" FontSize="12" MinWidth="24" MinHeight="24"/>
+                </MenuItem>
+                <MenuItem Header="Information" Foreground="#FFC5C5C5" Template="{DynamicResource MetroMenuItemControlTemplate}">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE946;" FontSize="12"/>
+                    </MenuItem.Icon>
+                    <MenuItem Header="FAQ"/>
+                    <MenuItem Header="About"/>
+                </MenuItem>
+            </Menu>
             <Frame x:Name="frame" Grid.Row="2" NavigationUIVisibility="Hidden"/>
         </Grid>
     </Border>

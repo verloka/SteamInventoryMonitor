@@ -38,7 +38,7 @@ namespace SteamInventoryMonitor
                     break;
                 case 1:
                     Width = 640;
-                    Height = 480;
+                    Height = 540;
                     frame.Navigate(new Uri("Views/ProfilePage.xaml", UriKind.Relative));
                     break;
             }

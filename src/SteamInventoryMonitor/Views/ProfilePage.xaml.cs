@@ -117,9 +117,9 @@ namespace SteamInventoryMonitor.Views
                     foreach (var item in Inventories)
                     {
                         int c = GetInventoryItemsCount(item.AppID, item.AppContext);
-                        if (c > 0)
+                        if (App.OPTION_SHOW_EMPTY_INVENTORY || c > 0)
                         {
-                            Controlls.InventoryButton ib = new Controlls.InventoryButton()
+                            InventoryButton ib = new InventoryButton()
                             {
                                 InventoryName = item.Name,
                                 InventoryIcon = $"{Directory.GetCurrentDirectory()}/{item.IconPath}",

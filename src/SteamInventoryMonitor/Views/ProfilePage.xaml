@@ -16,7 +16,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80px"/>
-            <RowDefinition Height="64px"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <CheckBox x:Name="EMPTY_LIST" Visibility="Collapsed" IsChecked="True"/>
@@ -38,13 +38,9 @@
             </Grid>
             <Button x:Name="btnLogout" Grid.Column="2" Content="Log out" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Click="btnLogoutClick"/>
         </Grid>
-        <Grid x:Name="gridInventoryLine" Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="64px"/>
-                <RowDefinition Height="auto"/>
-            </Grid.RowDefinitions>
-            <StackPanel x:Name="spInventories" Orientation="Horizontal" VerticalAlignment="Center" Margin="25,0" HorizontalAlignment="Left"/>
-        </Grid>
+        <ScrollViewer x:Name="gridInventoryLine" Grid.Row="1" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto">
+            <StackPanel x:Name="spInventories" Orientation="Horizontal" VerticalAlignment="Center" Margin="25,5, 25, 10" HorizontalAlignment="Left"/>
+        </ScrollViewer>
         <Grid x:Name="gridItemSearch" Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
