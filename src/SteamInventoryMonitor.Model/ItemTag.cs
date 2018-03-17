@@ -1,4 +1,4 @@
-﻿namespace SteamInventoryMonitor.Core.Models
+﻿namespace SteamInventoryMonitor.Models
 {
     public class ItemTag
     {

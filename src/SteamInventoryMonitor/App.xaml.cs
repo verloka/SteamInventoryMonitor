@@ -19,7 +19,5 @@ namespace SteamInventoryMonitor
         public static string INVENTORIES = $"{Directory.GetCurrentDirectory()}/Data/Inventories.json";
 
         public static string ID64 = "";
-
-        public static bool OPTION_SHOW_EMPTY_INVENTORY = false;
     }
 }

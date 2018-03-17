@@ -37,6 +37,9 @@
     <ApplicationIcon>Icons\helmet.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HelperLib, Version=1.4.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Verloka.HelperLib.1.4.0.5\lib\net452\HelperLib.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -76,11 +79,6 @@
     <Compile Include="Core\BoolToVisibilityConvert.cs" />
     <Compile Include="Core\BoolToCollapsedConvert.cs" />
     <Compile Include="Core\InventoryObject.cs" />
-    <Compile Include="Core\Models\Player.cs" />
-    <Compile Include="Core\Models\PlayerResponse.cs" />
-    <Compile Include="Core\Models\UserID64.cs" />
-    <Compile Include="Core\Models\UserIdResponse.cs" />
-    <Compile Include="Core\Models\UserInformation.cs" />
     <Compile Include="Views\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
@@ -99,11 +97,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Core\Models\Description.cs" />
-    <Compile Include="Core\Models\Inventory.cs" />
-    <Compile Include="Core\Models\Item.cs" />
-    <Compile Include="Core\Models\ItemDescription.cs" />
-    <Compile Include="Core\Models\ItemTag.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -230,6 +223,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\noise.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SteamInventoryMonitor.Model\SteamInventoryMonitor.Model.csproj">
+      <Project>{870599ce-b536-4600-8e21-37d8d44e7f8e}</Project>
+      <Name>SteamInventoryMonitor.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

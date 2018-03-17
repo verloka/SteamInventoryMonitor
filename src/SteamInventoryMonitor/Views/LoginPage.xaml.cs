@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using SteamInventoryMonitor.Core.Models;
+using SteamInventoryMonitor.Models;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;

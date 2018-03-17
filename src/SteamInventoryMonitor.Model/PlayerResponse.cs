@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SteamInventoryMonitor.Core.Models
+namespace SteamInventoryMonitor.Models
 {
     public class PlayerResponse
     {

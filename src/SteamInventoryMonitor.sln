@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamInventoryMonitor", "SteamInventoryMonitor\SteamInventoryMonitor.csproj", "{AFD410E9-635E-4A80-877F-1AEF3DC58B95}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamInventoryMonitor.Model", "SteamInventoryMonitor.Model\SteamInventoryMonitor.Model.csproj", "{870599CE-B536-4600-8E21-37D8D44E7F8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{AFD410E9-635E-4A80-877F-1AEF3DC58B95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFD410E9-635E-4A80-877F-1AEF3DC58B95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFD410E9-635E-4A80-877F-1AEF3DC58B95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{870599CE-B536-4600-8E21-37D8D44E7F8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{870599CE-B536-4600-8E21-37D8D44E7F8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{870599CE-B536-4600-8E21-37D8D44E7F8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{870599CE-B536-4600-8E21-37D8D44E7F8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

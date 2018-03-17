@@ -1,7 +1,8 @@
 ﻿using Newtonsoft.Json;
 using SteamInventoryMonitor.Controlls;
 using SteamInventoryMonitor.Core;
-using SteamInventoryMonitor.Core.Models;
+using SteamInventoryMonitor.Model;
+using SteamInventoryMonitor.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,7 @@ namespace SteamInventoryMonitor.Views
     {
         public Player Player { get; set; }
         public List<InventoryObject> Inventories { get; set; }
+        public TaskItem SelectedItem { get; set; }
 
         string searchAppid = "753"; //steam
         int searchAppcontext = 6;   //2 - games item, 6 - steam items (bg, emotion, cards, gems)
@@ -64,53 +66,57 @@ namespace SteamInventoryMonitor.Views
                 return 0;
             });
         }
-        void SearchItem(string name, string lid = "")
+        Task<Tuple<bool, bool>> SearchItem(string name, string lid = "")
         {
-            string lastid = lid;
-            string tail = string.IsNullOrWhiteSpace(lastid) ? string.Empty : $"&start_assetid={lastid}";
-
-            string str = $"http://steamcommunity.com/inventory/{Player.steamid}/{searchAppid}/{searchAppcontext}?l={App.LANGUAGE}&count={searchCount}{tail}";
-
-            using (WebClient wc = new WebClient())
+            return Task.Factory.StartNew(() =>
             {
-                Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
+                string lastid = lid;
+                string tail = string.IsNullOrWhiteSpace(lastid) ? string.Empty : $"&start_assetid={lastid}";
 
-                if (inv.Success)
+                string str = $"http://steamcommunity.com/inventory/{Player.steamid}/{searchAppid}/{searchAppcontext}?l={App.LANGUAGE}&count={searchCount}{tail}";
+
+                using (WebClient wc = new WebClient())
                 {
-                    foreach (var item in inv.descriptions)
-                        if (item.name == name)
-                        {
-                            tbName.Text = $"Name: {item.name}";
-                            tbType.Text = $"Type: {item.type}";
+                    Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
 
-                            tbMarketableYes.Visibility = item.marketable == 1 ? Visibility.Visible : Visibility.Collapsed;
-                            tbMarketableNo.Visibility = tbMarketableYes.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-
-                            tbTradableYes.Visibility = item.tradable == 1 ? Visibility.Visible : Visibility.Collapsed;
-                            tbTradableNo.Visibility = tbTradableYes.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-
-                            int amount = 0;
-
-                            foreach (var item2 in inv.assets)
-                                if (item.classid == item2.classid)
-                                    amount++;
-
-                            tbAmount.Text = $"Amount: {amount}";
-
-                            imgItemPreview.Source = new BitmapImage(new Uri($"{App.IMG_URL}{item.icon_url}"));
-
-                            EMPTY_LIST.IsChecked = false;
-                            return;
-                        }
-                    if (inv.Next)
-                        SearchItem(name, inv.last_assetid);
-                    else
+                    if (inv.Success)
                     {
-                        EMPTY_LIST.IsChecked = true;
-                        tbEmpty.Text = "item not found...";
+                        foreach (var item in inv.descriptions)
+                            if (item.name == name)
+                            {
+                                SelectedItem = new TaskItem
+                                {
+                                    Name = item.name,
+                                    AppId = searchAppid,
+                                    AppContext = searchAppcontext,
+                                    AssetId = item.classid,
+                                    IconUrl = $"{App.IMG_URL}{item.icon_url}"
+                                };
+
+                                SelectedItem.SetVar("type", item.type);
+                                SelectedItem.SetVar("marketable", item.marketable);
+                                SelectedItem.SetVar("tradable", item.tradable);
+
+
+                                int amount = 0;
+
+                                foreach (var item2 in inv.assets)
+                                    if (item.classid == item2.classid)
+                                        amount++;
+
+                                SelectedItem.SetVar("amount", amount);
+                                
+                                return new Tuple<bool, bool>(true, true);
+                            }
+                        if (inv.Next)
+                            return SearchItem(name, inv.last_assetid).Result;
+                        else
+                            return new Tuple<bool, bool>(true, false);
                     }
+                    else
+                        return new Tuple<bool, bool>(false, false);
                 }
-            }
+            });
         }
 
         private async void PageLoaded(object sender, RoutedEventArgs e)
@@ -130,7 +136,7 @@ namespace SteamInventoryMonitor.Views
                 foreach (var item in Inventories)
                 {
                     int c = await GetInventoryItemsCount(item.AppID, item.AppContext);
-                    if (App.OPTION_SHOW_EMPTY_INVENTORY || c > 0)
+                    if (App.MAIN_WINDOW.ShowEmptyInventories || c > 0)
                     {
                         InventoryButton ib = new InventoryButton()
                         {
@@ -162,7 +168,41 @@ namespace SteamInventoryMonitor.Views
                 ;//error
         }
 
-        private void btnSearchItemClick(object sender, RoutedEventArgs e) => SearchItem(tbSearchItemName.Text);
+        private async void btnSearchItemClick(object sender, RoutedEventArgs e)
+        {
+            App.MAIN_WINDOW.ShowAnimGrid(true, "searching...");
+
+            var result = await SearchItem(tbSearchItemName.Text);
+
+            if (result.Item1)
+            {
+                if(result.Item2)
+                {
+                    EMPTY_LIST.IsChecked = false;
+
+                    tbName.Text = $"Name: {SelectedItem.Name}";
+                    tbType.Text = $"Type: {SelectedItem.GetVar<string>("type")}";
+
+                    tbMarketableYes.Visibility = SelectedItem.GetVar<int>("marketable") == 1 ? Visibility.Visible : Visibility.Collapsed;
+                    tbMarketableNo.Visibility = tbMarketableYes.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+
+                    tbTradableYes.Visibility = SelectedItem.GetVar<int>("tradable") == 1 ? Visibility.Visible : Visibility.Collapsed;
+                    tbTradableNo.Visibility = tbTradableYes.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+
+                    tbAmount.Text = $"Amount: {SelectedItem.GetVar<int>("amount")}";
+                    imgItemPreview.Source = new BitmapImage(new Uri(SelectedItem.IconUrl));
+                }
+                else
+                {
+                    EMPTY_LIST.IsChecked = true;
+                    tbEmpty.Text = "item not found...";
+                }
+
+                App.MAIN_WINDOW.ShowAnimGrid(false, string.Empty);
+            }
+            else
+                ;//error
+        }
         private void btnLogoutClick(object sender, RoutedEventArgs e) => App.MAIN_WINDOW.SetupViewMode(0);
         private void InventoryClickClick(InventoryButton sender, string tag)
         {
