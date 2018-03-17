@@ -14,6 +14,23 @@
         WindowStartupLocation="CenterScreen" 
         WindowStyle="None" 
         Icon="Icons/helmet.ico">
+    <Window.Resources>
+        <Storyboard x:Key="DoingAnimation" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="tbAnimSymbol">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1.3"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.7" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="tbAnimSymbol">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1.3"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.7" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded" SourceName="gridAnim">
+            <BeginStoryboard Storyboard="{StaticResource DoingAnimation}"/>
+        </EventTrigger>
+    </Window.Triggers>
     <Border BorderThickness="1" BorderBrush="#FF007ACC">
         <Grid Background="#FF2D2D30">
             <Grid.RowDefinitions>
@@ -30,21 +47,31 @@
                 </Grid.ColumnDefinitions>
                 <Image Grid.Column="0" Source="{Binding ElementName=window, Path=Icon}" Margin="6"/>
                 <TextBlock Grid.Column="1" Text="{Binding ElementName=window, Path=Title, FallbackValue=window}" Foreground="#FFF0EFF1" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Center" FontSize="14"/>
-                <Button x:Name="btnInfo" Grid.Column="2" Content="?" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnCloseWinodwClick"/>
-                <Button x:Name="btnCloseWinodw" Grid.Column="3" Content="X" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnCloseWinodwClick"/>
+                <Button x:Name="btnInfo" Grid.Column="2" FontFamily="Segoe MDL2 Assets" Content="&#xF142;" FontSize="16" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnCloseWinodwClick"/>
+                <Button x:Name="btnCloseWinodw" Grid.Column="3" FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnCloseWinodwClick"/>
             </Grid>
             <Menu Grid.Row="1" Background="#FF181818" Margin="0" Padding="0,10,0,0">
                 <MenuItem Header="File" Foreground="#FFC5C5C5" Template="{DynamicResource MetroMenuItemControlTemplate}" VerticalContentAlignment="Center">
                     <MenuItem.Icon>
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE8E5;" FontSize="12"/>
                     </MenuItem.Icon>
-                    <MenuItem Header="Exit"/>
+                    <MenuItem Header="Add new inventory">
+                        <MenuItem.Icon>
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7FC;" FontSize="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator Background="#FF686868" BorderBrush="#FF686868"/>
+                    <MenuItem Header="Exit">
+                        <MenuItem.Icon>
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE750;" FontSize="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Task" Foreground="#FFC5C5C5" Template="{DynamicResource MetroMenuItemControlTemplate}">
                     <MenuItem.Icon>
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" FontSize="16"/>
                     </MenuItem.Icon>
-                    <Separator/>
+                    <Separator Background="#FF686868" BorderBrush="#FF686868"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Current state: "/>
                         <TextBlock Text="empty" FontStyle="Italic"/>
@@ -62,11 +89,35 @@
                     <MenuItem.Icon>
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE946;" FontSize="12"/>
                     </MenuItem.Icon>
-                    <MenuItem Header="FAQ"/>
-                    <MenuItem Header="About"/>
+                    <MenuItem Header="FAQ">
+                        <MenuItem.Icon>
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xF142;" FontSize="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="About">
+                        <MenuItem.Icon>
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xF13F;" FontSize="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </MenuItem>
             </Menu>
             <Frame x:Name="frame" Grid.Row="2" NavigationUIVisibility="Hidden"/>
+
+            <Grid x:Name="gridAnim" Grid.Row="1" Grid.RowSpan="2" Background="#7F000000" Visibility="Collapsed" Cursor="Wait">
+                <StackPanel x:Name="stackPanel"  HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock x:Name="tbAnimSymbol" FontFamily="Segoe MDL2 Assets" Text="&#xE945;" Foreground="#FFF0EFF1" FontSize="82" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50,0,50,35">
+                        <TextBlock.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                    <TextBlock x:Name="tbOperationText" Text="wait... we are getting information" Foreground="#FFF0EFF1" FontSize="20" />
+                </StackPanel>
+            </Grid>
         </Grid>
     </Border>
 </Window>

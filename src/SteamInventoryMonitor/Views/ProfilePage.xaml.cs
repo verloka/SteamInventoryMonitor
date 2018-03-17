@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace SteamInventoryMonitor.Views
@@ -27,21 +27,42 @@ namespace SteamInventoryMonitor.Views
             InitializeComponent();
         }
 
-        int GetInventoryItemsCount(string appid, int appcontext)
+        Task<bool> GetUserInformation()
         {
-            int count = 1;
+            return Task.Factory.StartNew(() =>
+           {
+               string url = $"http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={App.KEY}&steamids={App.ID64}";
 
-            string str = $"http://steamcommunity.com/inventory/{Player.steamid}/{appid}/{appcontext}?l={App.LANGUAGE}&count={count}";
-
-            using (WebClient wc = new WebClient())
+               using (WebClient wc = new WebClient())
+               {
+                   UserInformation ui = JsonConvert.DeserializeObject<UserInformation>(wc.DownloadString(url));
+                   if (ui.Success)
+                   {
+                       Player = ui.Player;
+                       return true;
+                   }
+                   return false;
+               }
+           });
+        }
+        Task<int> GetInventoryItemsCount(string appid, int appcontext)
+        {
+            return Task.Factory.StartNew(() =>
             {
-                Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
+                int count = 1;
 
-                if (inv.Success)
-                    return inv.total_inventory_count;
-            }
+                string str = $"http://steamcommunity.com/inventory/{Player.steamid}/{appid}/{appcontext}?l={App.LANGUAGE}&count={count}";
 
-            return 0;
+                using (WebClient wc = new WebClient())
+                {
+                    Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
+
+                    if (inv.Success)
+                        return inv.total_inventory_count;
+                }
+
+                return 0;
+            });
         }
         void SearchItem(string name, string lid = "")
         {
@@ -92,58 +113,53 @@ namespace SteamInventoryMonitor.Views
             }
         }
 
-        private void PageLoaded(object sender, RoutedEventArgs e)
+        private async void PageLoaded(object sender, RoutedEventArgs e)
         {
-            string url = $"http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={App.KEY}&steamids={App.ID64}";
+            App.MAIN_WINDOW.ShowAnimGrid(true, "loading inventories of user...");
 
-            using (WebClient wc = new WebClient())
+            if (await GetUserInformation())
             {
-                UserInformation ui = JsonConvert.DeserializeObject<UserInformation>(wc.DownloadString(url));
-                if (ui.Success)
+                tbUserName.Text = Player.personaname;
+                imgAva.Source = new BitmapImage(new Uri(Player.avatarmedium));
+                App.MAIN_WINDOW.SetupTitle(tbUserName.Text);
+                tbOnline.Visibility = Player.personastate > 0 ? Visibility.Visible : Visibility.Collapsed;
+                tbOffline.Visibility = tbOnline.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+
+                Inventories = JsonConvert.DeserializeObject<List<InventoryObject>>(File.ReadAllText(App.INVENTORIES));
+
+                foreach (var item in Inventories)
                 {
-                    Player = ui.Player;
-
-                    tbUserName.Text = Player.personaname;
-
-                    App.MAIN_WINDOW.SetupTitle(tbUserName.Text);
-
-                    tbOnline.Visibility = Player.personastate > 0 ? Visibility.Visible : Visibility.Collapsed;
-                    tbOffline.Visibility = tbOnline.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-
-                    imgAva.Source = new BitmapImage(new Uri(Player.avatarmedium));
-
-                    Inventories = JsonConvert.DeserializeObject<List<InventoryObject>>(File.ReadAllText(App.INVENTORIES));
-
-                    foreach (var item in Inventories)
+                    int c = await GetInventoryItemsCount(item.AppID, item.AppContext);
+                    if (App.OPTION_SHOW_EMPTY_INVENTORY || c > 0)
                     {
-                        int c = GetInventoryItemsCount(item.AppID, item.AppContext);
-                        if (App.OPTION_SHOW_EMPTY_INVENTORY || c > 0)
+                        InventoryButton ib = new InventoryButton()
                         {
-                            InventoryButton ib = new InventoryButton()
-                            {
-                                InventoryName = item.Name,
-                                InventoryIcon = $"{Directory.GetCurrentDirectory()}/{item.IconPath}",
-                                InventoryCount = c
-                            };
-                            ib.Click += InventoryClickClick;
+                            InventoryName = item.Name,
+                            InventoryIcon = $"{Directory.GetCurrentDirectory()}/{item.IconPath}",
+                            InventoryCount = c
+                        };
+                        ib.Click += InventoryClickClick;
 
-                            if (spInventories.Children.Count == 0)
-                            {
-                                searchAppid = item.AppID;
-                                searchAppcontext = item.AppContext;
-                                ib.InventoryCheked = true;
-                            }
-                            else
-                            {
-                                ib.Margin = new Thickness(20, 0, 0, 0);
-                                ib.InventoryCheked = false;
-                            }
-
-                            spInventories.Children.Add(ib);
+                        if (spInventories.Children.Count == 0)
+                        {
+                            searchAppid = item.AppID;
+                            searchAppcontext = item.AppContext;
+                            ib.InventoryCheked = true;
                         }
+                        else
+                        {
+                            ib.Margin = new Thickness(20, 0, 0, 0);
+                            ib.InventoryCheked = false;
+                        }
+
+                        spInventories.Children.Add(ib);
                     }
                 }
+
+                App.MAIN_WINDOW.ShowAnimGrid(false, string.Empty);
             }
+            else
+                ;//error
         }
 
         private void btnSearchItemClick(object sender, RoutedEventArgs e) => SearchItem(tbSearchItemName.Text);
@@ -154,7 +170,7 @@ namespace SteamInventoryMonitor.Views
                 (item as InventoryButton).InventoryCheked = false;
 
             foreach (var item in Inventories)
-                if(item.Name == tag)
+                if (item.Name == tag)
                 {
                     searchAppid = item.AppID;
                     searchAppcontext = item.AppContext;

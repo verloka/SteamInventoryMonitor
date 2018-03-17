@@ -26,6 +26,11 @@ namespace SteamInventoryMonitor
             DataContext = this;
         }
 
+        public void ShowAnimGrid(bool show, string text)
+        {
+            gridAnim.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+            tbOperationText.Text = text;
+        }
         public void SetupViewMode(int modeNumber)
         {
             switch (modeNumber)

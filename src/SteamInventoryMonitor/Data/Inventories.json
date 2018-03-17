@@ -56,6 +56,20 @@
     "Name": "Rust"
   },
   {
+    "AppID": "232090",
+    "AppContext": 2,
+    "IconURL": null,
+    "IconPath": "Icons/kf2.png",
+    "Name": "Killing Floor 2"
+  },
+  {
+    "AppID": "244850",
+    "AppContext": 2,
+    "IconURL": null,
+    "IconPath": "Icons/se.png",
+    "Name": "Space Engineers"
+  },
+  {
     "AppID": "304930",
     "AppContext": 2,
     "IconURL": null,

@@ -20,6 +20,6 @@ namespace SteamInventoryMonitor
 
         public static string ID64 = "";
 
-        public static bool OPTION_SHOW_EMPTY_INVENTORY = true;
+        public static bool OPTION_SHOW_EMPTY_INVENTORY = false;
     }
 }
