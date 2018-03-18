@@ -1,0 +1,63 @@
+﻿<Window x:Name="window" x:Class="SteamInventoryMonitor.Task.NotificationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SteamInventoryMonitor.Task"
+        mc:Ignorable="d"
+        Title="Steam Inventory Monitor: Notification" 
+        Height="100" 
+        Width="700" 
+        ResizeMode="NoResize" 
+        WindowStyle="None" 
+        Loaded="windowLoaded" 
+        ShowInTaskbar="False" 
+        Cursor="Hand"
+        AllowsTransparency="True"
+        Topmost="True" Background="{x:Null}">
+    <Window.Resources>
+        <Storyboard x:Key="ShowNotification">
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="rootBorder">
+                <EasingThicknessKeyFrame KeyTime="0" Value="0"/>
+                <EasingThicknessKeyFrame KeyTime="0:0:0.7" Value="0,0,300,0">
+                    <EasingThicknessKeyFrame.EasingFunction>
+                        <BackEase EasingMode="EaseInOut"/>
+                    </EasingThicknessKeyFrame.EasingFunction>
+                </EasingThicknessKeyFrame>
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="CloseNotification">
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="rootBorder">
+                <EasingThicknessKeyFrame KeyTime="0" Value="0,0,300,0"/>
+                <SplineThicknessKeyFrame KeyTime="0:0:0.7" Value="0" KeySpline="1,0,0,1"/>
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+            <BeginStoryboard Storyboard="{StaticResource ShowNotification}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="cbHide">
+            <BeginStoryboard x:Name="CloseNotification_BeginStoryboard1" Storyboard="{StaticResource CloseNotification}"/>
+        </EventTrigger>
+    </Window.Triggers>
+    <Grid>
+        <CheckBox x:Name="cbHide" Visibility="Collapsed" IsChecked="False"/>
+        <Border x:Name="rootBorder" BorderBrush="#FF007ACC" Background="#FF181818" BorderThickness="1"  Width="300" HorizontalAlignment="Right">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="32*"/>
+                    <ColumnDefinition Width="93*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="New message" Foreground="#FFC5C5C5" TextWrapping="NoWrap" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold"/>
+                <Button x:Name="btnCloseNotification" Grid.Row="0" FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Width="28" Height="28" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="1" Click="btnCloseNotificationClick" Style="{DynamicResource ButtonStyleBorderless}"/>
+                <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Source="Icons/gems.png" Margin="7"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="You are have new message from Steam Inventory Monitor" Foreground="#FFC5C5C5" TextWrapping="Wrap" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
