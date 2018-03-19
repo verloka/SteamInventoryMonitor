@@ -90,7 +90,8 @@ namespace SteamInventoryMonitor.Views
                                     AppId = searchAppid,
                                     AppContext = searchAppcontext,
                                     AssetId = item.classid,
-                                    IconUrl = $"{App.IMG_URL}{item.icon_url}"
+                                    IconUrl = $"{App.IMG_URL}{item.icon_url}",
+                                    OwnerID64 = App.ID64
                                 };
 
                                 SelectedItem.SetVar("type", item.type);
@@ -105,7 +106,7 @@ namespace SteamInventoryMonitor.Views
                                         amount++;
 
                                 SelectedItem.SetVar("amount", amount);
-                                
+
                                 return new Tuple<bool, bool>(true, true);
                             }
                         if (inv.Next)
@@ -167,7 +168,6 @@ namespace SteamInventoryMonitor.Views
             else
                 ;//error
         }
-
         private async void btnSearchItemClick(object sender, RoutedEventArgs e)
         {
             App.MAIN_WINDOW.ShowAnimGrid(true, "searching...");
@@ -176,7 +176,7 @@ namespace SteamInventoryMonitor.Views
 
             if (result.Item1)
             {
-                if(result.Item2)
+                if (result.Item2)
                 {
                     EMPTY_LIST.IsChecked = false;
 
@@ -216,6 +216,12 @@ namespace SteamInventoryMonitor.Views
                     searchAppcontext = item.AppContext;
                     sender.InventoryCheked = true;
                 }
+        }
+        private void btnAddClick(object sender, RoutedEventArgs e)
+        {
+
+            App.MAIN_WINDOW.AddItem(SelectedItem);
+            App.MAIN_WINDOW.UpdateStatus();
         }
     }
 }

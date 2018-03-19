@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Windows;
 
 namespace SteamInventoryMonitor
@@ -17,6 +11,7 @@ namespace SteamInventoryMonitor
         public static string LANGUAGE = "english";
         public static string IMG_URL = "https://steamcommunity-a.akamaihd.net/economy/image/";
         public static string INVENTORIES = $"{Directory.GetCurrentDirectory()}/Data/Inventories.json";
+        public static string TASK = $"{Directory.GetCurrentDirectory()}/Data/task.json";
 
         public static string ID64 = "";
     }

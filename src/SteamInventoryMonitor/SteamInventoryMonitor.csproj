@@ -78,7 +78,6 @@
     <Compile Include="Core\BoolToEnabledConvert.cs" />
     <Compile Include="Core\BoolToVisibilityConvert.cs" />
     <Compile Include="Core\BoolToCollapsedConvert.cs" />
-    <Compile Include="Core\InventoryObject.cs" />
     <Compile Include="Views\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>

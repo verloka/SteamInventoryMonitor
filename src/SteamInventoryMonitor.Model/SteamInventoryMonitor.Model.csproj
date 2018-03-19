@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Description.cs" />
     <Compile Include="Inventory.cs" />
+    <Compile Include="InventoryObject.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemDescription.cs" />
     <Compile Include="ItemTag.cs" />
@@ -49,6 +50,7 @@
     <Compile Include="PlayerResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TaskItem.cs" />
+    <Compile Include="TaskObject.cs" />
     <Compile Include="UserID64.cs" />
     <Compile Include="UserIdResponse.cs" />
     <Compile Include="UserInformation.cs" />

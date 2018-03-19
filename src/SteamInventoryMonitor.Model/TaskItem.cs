@@ -10,6 +10,8 @@ namespace SteamInventoryMonitor.Model
         public int AppContext { get; set; }
         public string IconUrl { get; set; }
 
+        public string OwnerID64 { get; set; }
+
         Dictionary<string, object> vars;
 
         public TaskItem()

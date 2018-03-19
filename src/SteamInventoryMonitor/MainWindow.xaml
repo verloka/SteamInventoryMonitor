@@ -13,7 +13,7 @@
         ResizeMode="NoResize" 
         WindowStartupLocation="CenterScreen" 
         WindowStyle="None" 
-        Icon="Icons/helmet.ico">
+        Icon="Icons/helmet.ico" Closing="windowClosing">
     <Window.Resources>
         <Storyboard x:Key="DoingAnimation" RepeatBehavior="Forever">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="tbAnimSymbol">
@@ -74,7 +74,7 @@
                     <Separator Background="#FF686868" BorderBrush="#FF686868"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Current state: "/>
-                        <TextBlock Text="empty" FontStyle="Italic"/>
+                        <TextBlock x:Name="tbStatus" Text="empty" FontStyle="Italic"/>
                     </StackPanel>
                 </MenuItem>
                 <MenuItem Header="Options" Foreground="#FFC5C5C5" Template="{DynamicResource MetroMenuItemControlTemplate}">
@@ -129,7 +129,7 @@
                 </Grid.ColumnDefinitions>
                 <Image Grid.Column="0" Grid.Row="0" Source="Icons/helmet.ico" Width="128" Height="128" VerticalAlignment="Top" Margin="15,15,15,10"/>
                 <StackPanel Grid.Column="1" Grid.Row="0" Margin="10,20,20,20">
-                    <TextBlock Text="SteamInventoryMonitor" Foreground="#FFC5C5C5" FontSize="18"/>
+                    <TextBlock Text="Steam Inventory Monitor" Foreground="#FFC5C5C5" FontSize="18"/>
                     <TextBlock Text="Application 'spy' for items in inventories of users of Steam" Foreground="#FFC5C5C5" FontSize="14" TextWrapping="Wrap"/>
                     <TextBlock Text="Version: 18.3" Foreground="#FFC5C5C5" FontSize="14" Margin="0,10,0,0"/>
                     <StackPanel Orientation="Horizontal" Margin="0,3,0,0">

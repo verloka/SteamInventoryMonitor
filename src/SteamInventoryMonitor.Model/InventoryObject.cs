@@ -1,4 +1,4 @@
-﻿namespace SteamInventoryMonitor.Core
+﻿namespace SteamInventoryMonitor.Model
 {
     public class InventoryObject
     {

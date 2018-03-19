@@ -1,23 +1,13 @@
 ﻿using Microsoft.Win32;
 using Newtonsoft.Json;
-using SteamInventoryMonitor.Models;
+using SteamInventoryMonitor.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Verloka.HelperLib.Settings;
 
 namespace SteamInventoryMonitor
@@ -51,15 +41,21 @@ namespace SteamInventoryMonitor
             }
         }
 
+        TaskObject TO;
+
         RegSettings rs;
 
         public MainWindow()
         {
-            InitializeComponent();
             rs = new RegSettings("SteamInventoryMonitor");
+            TO = File.Exists(App.TASK) ? JsonConvert.DeserializeObject<TaskObject>(File.ReadAllText(App.TASK)) : new TaskObject();
+
+            InitializeComponent();
             DataContext = this;
         }
 
+        public void AddItem(TaskItem ti) => TO.ExistItems.Add(ti);
+        public void AddItem(string name, string appid) => TO.NotExistsItems.Add(new KeyValuePair<string, string>(appid, name));
         public void ShowAnimGrid(bool show, string text)
         {
             gridAnim.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
@@ -84,6 +80,7 @@ namespace SteamInventoryMonitor
         }
         public void SetupTitle(string title, bool full = false) => Title = full ? title : $"Steam Inventory Monitor: {title}";
         public void ShowAbout(bool show) => gridAbout.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+        public void UpdateStatus() => tbStatus.Text = (TO == null || (TO.ExistItems.Count == 0 && TO.NotExistsItems.Count == 0)) ? "empty line" : $"{TO.ExistItems.Count + TO.NotExistsItems.Count} items in task";
 
         #region Window Events
         private void DragWindow(object sender, MouseButtonEventArgs e)
@@ -99,6 +96,7 @@ namespace SteamInventoryMonitor
         {
             App.MAIN_WINDOW = this;
 
+            UpdateStatus();
             SetupViewMode(0);
         }
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
@@ -109,5 +107,10 @@ namespace SteamInventoryMonitor
         private void btnCloseAboutClick(object sender, RoutedEventArgs e) => ShowAbout(false);
         private void menuItemAboutClick(object sender, RoutedEventArgs e) => ShowAbout(true);
         private void menuItemExitClick(object sender, RoutedEventArgs e) => Close();
+        private async void windowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            using (StreamWriter sw = File.CreateText(App.TASK))
+                await sw.WriteLineAsync(JsonConvert.SerializeObject(TO));
+        }
     }
 }
