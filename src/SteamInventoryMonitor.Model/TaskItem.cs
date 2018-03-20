@@ -11,6 +11,8 @@ namespace SteamInventoryMonitor.Model
         public string IconUrl { get; set; }
 
         public string OwnerID64 { get; set; }
+        public int CompareMethod { get; set; }
+        public int CompareArgument { get; set; }
 
         Dictionary<string, object> vars;
 

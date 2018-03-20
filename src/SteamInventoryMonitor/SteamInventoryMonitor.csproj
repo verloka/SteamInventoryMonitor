@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Icons\helmet.ico</ApplicationIcon>
+    <ApplicationIcon>Icons\chevron.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="HelperLib, Version=1.4.0.5, Culture=neutral, processorArchitecture=MSIL">
@@ -190,9 +190,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\helmet.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\h1z1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -225,6 +222,12 @@
       <Project>{870599ce-b536-4600-8e21-37d8d44e7f8e}</Project>
       <Name>SteamInventoryMonitor.Model</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\empty.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\chevron.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

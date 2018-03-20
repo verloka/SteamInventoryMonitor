@@ -13,7 +13,7 @@
         ResizeMode="NoResize" 
         WindowStartupLocation="CenterScreen" 
         WindowStyle="None" 
-        Icon="Icons/helmet.ico" Closing="windowClosing">
+        Icon="Icons/chevron.ico" Closing="windowClosing">
     <Window.Resources>
         <Storyboard x:Key="DoingAnimation" RepeatBehavior="Forever">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="tbAnimSymbol">
@@ -118,6 +118,50 @@
                     <TextBlock x:Name="tbOperationText" Text="wait... we are getting information" Foreground="#FFF0EFF1" FontSize="20" HorizontalAlignment="Center" />
                 </StackPanel>
             </Grid>
+            <Grid x:Name="gridAdd" Grid.Row="1" Grid.RowSpan="2" Background="#FF2D2D30" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Image x:Name="imgItem" Grid.Column="0" Margin="15" Source="Icons/empty.png" VerticalAlignment="Top"/>
+                <StackPanel Orientation="Vertical" Grid.Column="1" Margin="15">
+                    <TextBlock x:Name="tbName" Text="Name: NaN" FontSize="18" Foreground="#FFC5C5C5" Margin="15,5,5,5" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="tbAmount" Text="Amount: NaN" FontSize="16" Foreground="#FFC5C5C5" Margin="15,5,5,5" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="tbType" Text="Type: NaN" FontSize="16" Foreground="#FFC5C5C5" Margin="15,5,5,5" TextWrapping="Wrap"/>
+                    <StackPanel Orientation="Horizontal" Margin="15,5,5,5">
+                        <TextBlock Text="Marketable: " FontSize="16" Foreground="#FFC5C5C5"/>
+                        <TextBlock x:Name="tbMarketableYes" Text="yes" FontSize="16" Foreground="#FF8DD28A"/>
+                        <TextBlock x:Name="tbMarketableNo" Text="no" FontSize="16" Foreground="#FFFFCC00"/>
+                        <TextBlock x:Name="tbMarketableUn" Text="undefined" FontSize="16" Foreground="#FFD7AC6A"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="15,5,5,5">
+                        <TextBlock Text="Tradable: " FontSize="16" Foreground="#FFC5C5C5"/>
+                        <TextBlock x:Name="tbTradableYes" Text="yes" FontSize="16" Foreground="#FF8DD28A"/>
+                        <TextBlock x:Name="tbTradableNo" Text="no" FontSize="16" Foreground="#FFFFCC00"/>
+                        <TextBlock x:Name="tbTradableUn" Text="undefined" FontSize="16" Foreground="#FFD7AC6A"/>
+                    </StackPanel>
+                    <TextBlock Text="Show notification when item:" FontSize="16" Foreground="#FFC5C5C5" Margin="15,5,5,5"/>
+                    <StackPanel Orientation="Horizontal" Margin="35,0,5,5">
+                        <TextBlock Text="Item" FontSize="16" Foreground="#FFC5C5C5" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="cbComparer" SelectedIndex="0" Width="75" Margin="20,0">
+                            <ComboBoxItem Content="=="/>
+                            <ComboBoxItem Content="!="/>
+                            <ComboBoxItem Content=">"/>
+                            <ComboBoxItem Content=">="/>
+                            <ComboBoxItem Content="&lt;"/>
+                            <ComboBoxItem Content="&lt;="/>
+                        </ComboBox>
+                        <TextBox x:Name="tbValue" Width="75" Text="0" PreviewTextInput="tbValuePreviewTextInput"/>
+                        <TextBlock Text="in inventory" FontSize="16" Foreground="#FFC5C5C5" VerticalAlignment="Center" Margin="20,0,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+                <Button x:Name="btnAdd" Grid.Column="1" Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="btnAddClick">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Add to Task"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
             <Grid x:Name="gridAbout" Grid.Row="1" Grid.RowSpan="2" Background="#FF2D2D30" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -127,7 +171,7 @@
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Grid.Row="0" Source="Icons/helmet.ico" Width="128" Height="128" VerticalAlignment="Top" Margin="15,15,15,10"/>
+                <Image Grid.Column="0" Grid.Row="0" Source="Icons/chevron.ico" Width="128" Height="128" VerticalAlignment="Top" Margin="15,15,15,10"/>
                 <StackPanel Grid.Column="1" Grid.Row="0" Margin="10,20,20,20">
                     <TextBlock Text="Steam Inventory Monitor" Foreground="#FFC5C5C5" FontSize="18"/>
                     <TextBlock Text="Application 'spy' for items in inventories of users of Steam" Foreground="#FFC5C5C5" FontSize="14" TextWrapping="Wrap"/>

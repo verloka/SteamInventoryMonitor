@@ -2,11 +2,11 @@
 using Newtonsoft.Json;
 using SteamInventoryMonitor.Model;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Verloka.HelperLib.Settings;
 
@@ -43,6 +43,11 @@ namespace SteamInventoryMonitor
 
         TaskObject TO;
 
+        TaskItem TI;
+        string ItemName = string.Empty;
+        string AppId = string.Empty;
+        bool IsNotFound = false;
+
         RegSettings rs;
 
         public MainWindow()
@@ -54,8 +59,49 @@ namespace SteamInventoryMonitor
             DataContext = this;
         }
 
-        public void AddItem(TaskItem ti) => TO.ExistItems.Add(ti);
-        public void AddItem(string name, string appid) => TO.NotExistsItems.Add(new KeyValuePair<string, string>(appid, name));
+        public void AddItem(TaskItem ti)
+        {
+            TI = ti;
+
+            tbName.Text = $"Name: {ti.Name}";
+            tbType.Text = $"Type: {ti.GetVar<string>("type")}";
+
+            tbAmount.Text = $"Amount: {ti.GetVar<int>("amount")}";
+            imgItem.Source = new BitmapImage(new Uri(ti.IconUrl));
+
+            tbMarketableYes.Visibility = ti.GetVar<int>("marketable") == 1 ? Visibility.Visible : Visibility.Collapsed;
+            tbMarketableNo.Visibility = tbMarketableYes.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            tbMarketableUn.Visibility = Visibility.Collapsed;
+
+            tbTradableYes.Visibility = ti.GetVar<int>("tradable") == 1 ? Visibility.Visible : Visibility.Collapsed;
+            tbTradableNo.Visibility = tbTradableYes.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            tbTradableUn.Visibility = Visibility.Collapsed;
+
+            IsNotFound = false;
+            gridAdd.Visibility = Visibility.Visible;
+        }
+        public void AddItem(string name, string appid)
+        {
+            ItemName = name;
+            AppId = appid;
+
+            tbName.Text = $"Name: {ItemName}";
+            tbType.Text = "Type: NaN";
+
+            tbAmount.Text = "Amount: 0";
+            imgItem.Source = new BitmapImage(new Uri("/SteamInventoryMonitor;component/Icons/empty.png", UriKind.RelativeOrAbsolute));
+
+            tbMarketableYes.Visibility = Visibility.Collapsed;
+            tbMarketableNo.Visibility = Visibility.Collapsed;
+            tbMarketableUn.Visibility = Visibility.Visible;
+
+            tbTradableYes.Visibility = Visibility.Collapsed;
+            tbTradableNo.Visibility = Visibility.Collapsed;
+            tbTradableUn.Visibility = Visibility.Visible;
+
+            IsNotFound = true;
+            gridAdd.Visibility = Visibility.Visible;
+        }
         public void ShowAnimGrid(bool show, string text)
         {
             gridAnim.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
@@ -111,6 +157,27 @@ namespace SteamInventoryMonitor
         {
             using (StreamWriter sw = File.CreateText(App.TASK))
                 await sw.WriteLineAsync(JsonConvert.SerializeObject(TO));
+        }
+        private void btnAddClick(object sender, RoutedEventArgs e)
+        {
+            int.TryParse(tbValue.Text, out int i);
+
+            if (IsNotFound)
+                TO.NotExistsItems.Add(new Tuple<string, string, string, int, int>(App.ID64, AppId, ItemName, cbComparer.SelectedIndex == -1 ? 0 : cbComparer.SelectedIndex, i));
+            else
+            {
+                TI.CompareMethod = cbComparer.SelectedIndex == -1 ? 0 : cbComparer.SelectedIndex;
+                TI.CompareArgument = i;
+                TO.ExistItems.Add(TI);
+            }
+
+            gridAdd.Visibility = Visibility.Collapsed;
+            App.MAIN_WINDOW.UpdateStatus();
+        }
+        private void tbValuePreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (!char.IsDigit(e.Text, e.Text.Length - 1))
+                e.Handled = true;
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using SteamInventoryMonitor.Controlls;
-using SteamInventoryMonitor.Core;
 using SteamInventoryMonitor.Model;
 using SteamInventoryMonitor.Models;
 using System;
@@ -196,9 +195,11 @@ namespace SteamInventoryMonitor.Views
                 {
                     EMPTY_LIST.IsChecked = true;
                     tbEmpty.Text = "item not found...";
+                    imgItemPreview.Source = new BitmapImage(new Uri("/SteamInventoryMonitor;component/Icons/empty.png", UriKind.RelativeOrAbsolute));
                 }
 
                 App.MAIN_WINDOW.ShowAnimGrid(false, string.Empty);
+                btnAdd.IsEnabled = true;
             }
             else
                 ;//error
@@ -219,9 +220,15 @@ namespace SteamInventoryMonitor.Views
         }
         private void btnAddClick(object sender, RoutedEventArgs e)
         {
+            if (EMPTY_LIST.IsChecked.Value)
+            {
+                if (string.IsNullOrWhiteSpace(tbSearchItemName.Text))
+                    return;
 
-            App.MAIN_WINDOW.AddItem(SelectedItem);
-            App.MAIN_WINDOW.UpdateStatus();
+                App.MAIN_WINDOW.AddItem(tbSearchItemName.Text, searchAppid);
+            }
+            else
+                App.MAIN_WINDOW.AddItem(SelectedItem);
         }
     }
 }
