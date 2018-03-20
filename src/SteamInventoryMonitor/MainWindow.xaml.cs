@@ -37,7 +37,7 @@ namespace SteamInventoryMonitor
                 if (!value)
                     key.DeleteValue("SteamInventoryMonitor", false);
                 else
-                    key.SetValue("SteamInventoryMonitor", $"path to task");
+                    key.SetValue("SteamInventoryMonitor", $"{Directory.GetCurrentDirectory()}/SteamInventoryMonitor.Task.exe -s");
             }
         }
 
@@ -46,6 +46,7 @@ namespace SteamInventoryMonitor
         TaskItem TI;
         string ItemName = string.Empty;
         string AppId = string.Empty;
+        int AppCtx = 2;
         bool IsNotFound = false;
 
         RegSettings rs;
@@ -80,10 +81,11 @@ namespace SteamInventoryMonitor
             IsNotFound = false;
             gridAdd.Visibility = Visibility.Visible;
         }
-        public void AddItem(string name, string appid)
+        public void AddItem(string name, string appid, int apctx)
         {
             ItemName = name;
             AppId = appid;
+            AppCtx = apctx;
 
             tbName.Text = $"Name: {ItemName}";
             tbType.Text = "Type: NaN";
@@ -126,7 +128,7 @@ namespace SteamInventoryMonitor
         }
         public void SetupTitle(string title, bool full = false) => Title = full ? title : $"Steam Inventory Monitor: {title}";
         public void ShowAbout(bool show) => gridAbout.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
-        public void UpdateStatus() => tbStatus.Text = (TO == null || (TO.ExistItems.Count == 0 && TO.NotExistsItems.Count == 0)) ? "empty line" : $"{TO.ExistItems.Count + TO.NotExistsItems.Count} items in task";
+        public void UpdateStatus() => tbStatus.Text = (TO == null || (TO.Items.Count == 0 && TO.ItemsNF.Count == 0)) ? "empty line" : $"{TO.Items.Count + TO.ItemsNF.Count} items in task";
 
         #region Window Events
         private void DragWindow(object sender, MouseButtonEventArgs e)
@@ -163,12 +165,20 @@ namespace SteamInventoryMonitor
             int.TryParse(tbValue.Text, out int i);
 
             if (IsNotFound)
-                TO.NotExistsItems.Add(new Tuple<string, string, string, int, int>(App.ID64, AppId, ItemName, cbComparer.SelectedIndex == -1 ? 0 : cbComparer.SelectedIndex, i));
+                TO.ItemsNF.Add(new TaskItem()
+                {
+                    AppId = AppId,
+                    AppContext = AppCtx,
+                    Name = ItemName,
+                    OwnerID64 = App.ID64,
+                    CompareMethod = cbComparer.SelectedIndex == -1 ? 0 : cbComparer.SelectedIndex,
+                    CompareArgument = i
+                });
             else
             {
                 TI.CompareMethod = cbComparer.SelectedIndex == -1 ? 0 : cbComparer.SelectedIndex;
                 TI.CompareArgument = i;
-                TO.ExistItems.Add(TI);
+                TO.Items.Add(TI);
             }
 
             gridAdd.Visibility = Visibility.Collapsed;

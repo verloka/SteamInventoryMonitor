@@ -225,7 +225,7 @@ namespace SteamInventoryMonitor.Views
                 if (string.IsNullOrWhiteSpace(tbSearchItemName.Text))
                     return;
 
-                App.MAIN_WINDOW.AddItem(tbSearchItemName.Text, searchAppid);
+                App.MAIN_WINDOW.AddItem(tbSearchItemName.Text, searchAppid, searchAppcontext);
             }
             else
                 App.MAIN_WINDOW.AddItem(SelectedItem);

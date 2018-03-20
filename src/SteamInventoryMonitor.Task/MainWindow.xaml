@@ -5,7 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SteamInventoryMonitor.Task"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Steam Inventory Monitor: Task" 
+        Height="450" 
+        Width="800" 
+        Icon="Icons/icon.ico" 
+        ResizeMode="NoResize">
     <Grid>
         <Button Content="Click" Click="OpenTestNotificatio"/>
     </Grid>
