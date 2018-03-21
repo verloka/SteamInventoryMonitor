@@ -1,0 +1,171 @@
+﻿<UserControl x:Name="userControl" x:Class="SteamInventoryMonitor.Task.Controlls.ItemControll"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SteamInventoryMonitor.Task.Controlls"
+             mc:Ignorable="d" Loaded="userControlLoaded" >
+    <UserControl.Resources>
+        <Storyboard x:Key="ShowBorder">
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)" Storyboard.TargetName="border">
+                <EasingColorKeyFrame KeyTime="0" Value="#008DD28A"/>
+                <EasingColorKeyFrame KeyTime="0:0:0.3" Value="#3F8DD28A">
+                    <EasingColorKeyFrame.EasingFunction>
+                        <BackEase EasingMode="EaseInOut"/>
+                    </EasingColorKeyFrame.EasingFunction>
+                </EasingColorKeyFrame>
+            </ColorAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="btnRemove">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="btnEdit">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="image">
+                <EasingThicknessKeyFrame KeyTime="0" Value="10"/>
+                <EasingThicknessKeyFrame KeyTime="0:0:0.3" Value="5"/>
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="HiderBorder">
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)" Storyboard.TargetName="border">
+                <SplineColorKeyFrame KeyTime="0" Value="#3F8DD28A"/>
+                <SplineColorKeyFrame KeyTime="0:0:0.3" Value="#008DD28A"/>
+            </ColorAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="btnRemove">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="btnEdit">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="image">
+                <EasingThicknessKeyFrame KeyTime="0" Value="5"/>
+                <EasingThicknessKeyFrame KeyTime="0:0:0.3" Value="10"/>
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="SwapPanel">
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="gridEdit">
+                <EasingThicknessKeyFrame KeyTime="0" Value="0,0,0,-100"/>
+                <EasingThicknessKeyFrame KeyTime="0:0:0.3" Value="0">
+                    <EasingThicknessKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseInOut"/>
+                    </EasingThicknessKeyFrame.EasingFunction>
+                </EasingThicknessKeyFrame>
+            </ThicknessAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="gridControll">
+                <EasingThicknessKeyFrame KeyTime="0" Value="0"/>
+                <EasingThicknessKeyFrame KeyTime="0:0:0.3" Value="0,0,0,-100"/>
+            </ThicknessAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="tbDesc">
+                <EasingThicknessKeyFrame KeyTime="0" Value="15,0,0,0"/>
+                <EasingThicknessKeyFrame KeyTime="0:0:0.3" Value="15,100,0,0"/>
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="SwapPanelBack">
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="gridControll">
+                <SplineThicknessKeyFrame KeyTime="0" Value="0,0,0,-100"/>
+                <SplineThicknessKeyFrame KeyTime="0:0:0.3" Value="0"/>
+            </ThicknessAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="gridEdit">
+                <SplineThicknessKeyFrame KeyTime="0" Value="0"/>
+                <SplineThicknessKeyFrame KeyTime="0:0:0.3" Value="0,0,0,-100"/>
+            </ThicknessAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="tbDesc">
+                <EasingThicknessKeyFrame KeyTime="0" Value="15,100,0,0"/>
+                <EasingThicknessKeyFrame KeyTime="0:0:0.3" Value="15,0,0,0"/>
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="DeleteAnimation">
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Margin)" Storyboard.TargetName="border">
+                <EasingThicknessKeyFrame KeyTime="0" Value="0"/>
+                <EasingThicknessKeyFrame KeyTime="0:0:0.4" Value="800,0,0,0">
+                    <EasingThicknessKeyFrame.EasingFunction>
+                        <QuinticEase EasingMode="EaseIn"/>
+                    </EasingThicknessKeyFrame.EasingFunction>
+                </EasingThicknessKeyFrame>
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="UIElement.MouseEnter" SourceName="border">
+            <BeginStoryboard Storyboard="{StaticResource ShowBorder}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="UIElement.MouseLeave" SourceName="border">
+            <BeginStoryboard x:Name="HiderBorder_BeginStoryboard" Storyboard="{StaticResource HiderBorder}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="btnEdit">
+            <BeginStoryboard x:Name="HiderBorder_BeginStoryboard1" Storyboard="{StaticResource SwapPanel}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="btnDone">
+            <BeginStoryboard x:Name="SwapPanelBack_BeginStoryboard" Storyboard="{StaticResource SwapPanelBack}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="btnRemove">
+            <BeginStoryboard Storyboard="{StaticResource DeleteAnimation}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="btnCancel">
+            <BeginStoryboard x:Name="SwapPanelBack_BeginStoryboard1" Storyboard="{StaticResource SwapPanelBack}"/>
+        </EventTrigger>
+    </UserControl.Triggers>
+    <Grid ClipToBounds="True">
+        <Border x:Name="border" BorderThickness="2" BorderBrush="#008DD28A" Background="#FF2D2D30" >
+            <Grid x:Name="grid" Height="80" MinWidth="350">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80px"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image x:Name="image" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Margin="10" Source="{Binding Path=ItemIcon}"/>
+                <TextBlock Text="{Binding Path=ItemName, FallbackValue=name}" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="15,0,0,0" TextWrapping="NoWrap" Foreground="#FFC5C5C5" FontSize="16" />
+                <Grid x:Name="gridControll" Grid.Column="1" Grid.Row="1" Margin="0">
+                    <TextBlock x:Name="tbDesc" Text="Show notification when item == 0 in inventory" VerticalAlignment="Top" Margin="15,0,0,0" TextWrapping="NoWrap" Foreground="#FFC5C5C5" FontSize="14" />
+                    <Button x:Name="btnEdit" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="100" Margin="0,0,120,0" Opacity="0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE70F;" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="11"/>
+                            <TextBlock Text="Edit" FontSize="10"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="btnRemove" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Width="100" Margin="10,0" Opacity="0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="11"/>
+                            <TextBlock Text="Remove" FontSize="10"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+                <StackPanel x:Name="gridEdit" Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,-100">
+                    <TextBlock Text="Show notification when item:" FontSize="14" Foreground="#FFC5C5C5" Margin="15,5,5,5" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                        <ComboBox x:Name="cbComparer" SelectedIndex="{Binding Path=CompareMethod, FallbackValue=0}" Width="75" Margin="0,0,20,0">
+                            <ComboBoxItem Content="=="/>
+                            <ComboBoxItem Content="!="/>
+                            <ComboBoxItem Content=">"/>
+                            <ComboBoxItem Content=">="/>
+                            <ComboBoxItem Content="&lt;"/>
+                            <ComboBoxItem Content="&lt;="/>
+                        </ComboBox>
+                        <TextBox x:Name="tbValue" Width="75" Text="{Binding Path=CompareArgument, FallbackValue=0}" PreviewTextInput="tbValuePreviewTextInput"/>
+                        <TextBlock Text="in inventory" FontSize="16" Foreground="#FFC5C5C5" VerticalAlignment="Center" Margin="20,0,0,0"/>
+                        <Button x:Name="btnDone" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,0,10,0" Click="btnDoneClick">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74E;" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="11"/>
+                                <TextBlock Text="Save" FontSize="10"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="btnCancel" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0" Click="btnDoneClick">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74E;" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="11"/>
+                                <TextBlock Text="Cancel" FontSize="10"/>
+                            </StackPanel>
+                        </Button>
+                       
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

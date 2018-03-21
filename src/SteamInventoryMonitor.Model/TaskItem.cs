@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SteamInventoryMonitor.Model
 {
     public class TaskItem
     {
+        public string UID { get; set; }
         public string Name { get; set; }
         public string AssetId { get; set; }
         public string AppId { get; set; }
@@ -18,6 +20,7 @@ namespace SteamInventoryMonitor.Model
 
         public TaskItem()
         {
+            UID = Guid.NewGuid().ToString();
             vars = new Dictionary<string, object>();
         }
 

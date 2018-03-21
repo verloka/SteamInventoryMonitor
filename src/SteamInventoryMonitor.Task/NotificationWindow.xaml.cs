@@ -10,9 +10,32 @@ namespace SteamInventoryMonitor.Task
         SoundPlayer player = new SoundPlayer("Sounds/open-ended.wav");
         DispatcherTimer timer;
 
+        public string NotificationTitle
+        {
+            get { return GetValue(NotificationTitleProperty) as string; }
+            set { SetValue(NotificationTitleProperty, value); }
+        }
+        public static readonly DependencyProperty NotificationTitleProperty = DependencyProperty.Register("NotificationTitle", typeof(string), typeof(NotificationWindow), null);
+
+        public string NotificationMsg
+        {
+            get { return GetValue(NotificationMsgProperty) as string; }
+            set { SetValue(NotificationMsgProperty, value); }
+        }
+        public static readonly DependencyProperty NotificationMsgProperty = DependencyProperty.Register("NotificationMsg", typeof(string), typeof(NotificationWindow), null);
+
+        public string NotificationIcon
+        {
+            get { return GetValue(NotificationIconProperty) as string; }
+            set { SetValue(NotificationIconProperty, value); }
+        }
+        public static readonly DependencyProperty NotificationIconProperty = DependencyProperty.Register("NotificationIcon", typeof(string), typeof(NotificationWindow), null);
+
         public NotificationWindow()
         {
             InitializeComponent();
+            DataContext = this;
+
             player.Load();
             timer = new DispatcherTimer();
             timer.Tick += TimerTick;

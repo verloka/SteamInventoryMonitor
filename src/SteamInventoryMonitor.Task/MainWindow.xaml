@@ -5,12 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SteamInventoryMonitor.Task"
         mc:Ignorable="d"
+        x:Name="window"
         Title="Steam Inventory Monitor: Task" 
         Height="450" 
         Width="800" 
         Icon="Icons/icon.ico" 
-        ResizeMode="NoResize">
-    <Grid>
-        <Button Content="Click" Click="OpenTestNotificatio"/>
-    </Grid>
+        ResizeMode="NoResize" WindowStyle="None" Loaded="windowLoaded">
+    <Border BorderThickness="1" BorderBrush="#FF007ACC">
+        <Grid Background="#FF2D2D30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32px"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid x:Name="gridTitle" Background="#FF181818" MouseDown="DragWindow">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="32px"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="32px"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Source="{Binding Icon, ElementName=window}" Margin="6"/>
+                <TextBlock Grid.Column="1" Text="{Binding Title, ElementName=window, FallbackValue=window}" Foreground="#FFF0EFF1" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Center" FontSize="14"/>
+                <Button x:Name="btnCloseWinodw" Grid.Column="2" FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnCloseWinodwClick"/>
+            </Grid>
+            <Frame x:Name="frame" Grid.Row="1" NavigationUIVisibility="Hidden"/>
+        </Grid>
+    </Border>
 </Window>
