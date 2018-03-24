@@ -70,7 +70,7 @@ namespace SteamInventoryMonitor
             DataContext = this;
         }
 
-        public async void AddItem(TaskItem ti)
+        public void AddItem(TaskItem ti)
         {
             TI = ti;
 
@@ -91,10 +91,9 @@ namespace SteamInventoryMonitor
             IsNotFound = false;
             gridAdd.Visibility = Visibility.Visible;
 
-            using (StreamWriter sw = File.CreateText(App.TASK))
-                await sw.WriteLineAsync(JsonConvert.SerializeObject(TO));
+            SaveTO();
         }
-        public async void AddItem(string name, string appid, int apctx)
+        public void AddItem(string name, string appid, int apctx)
         {
             ItemName = name;
             AppId = appid;
@@ -117,8 +116,7 @@ namespace SteamInventoryMonitor
             IsNotFound = true;
             gridAdd.Visibility = Visibility.Visible;
 
-            using (StreamWriter sw = File.CreateText(App.TASK))
-                await sw.WriteLineAsync(JsonConvert.SerializeObject(TO));
+            SaveTO();
         }
         public void ShowAnimGrid(bool show, string text)
         {
@@ -145,6 +143,15 @@ namespace SteamInventoryMonitor
         public void SetupTitle(string title, bool full = false) => Title = full ? title : $"Steam Inventory Monitor: {title}";
         public void ShowAbout(bool show) => gridAbout.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
         public void UpdateStatus() => tbStatus.Text = (TO == null || (TO.Items.Count == 0 && TO.ItemsNF.Count == 0)) ? "empty line" : $"{TO.Items.Count + TO.ItemsNF.Count} items in task";
+
+        async void SaveTO()
+        {
+            if (File.Exists(App.TASK))
+                File.Delete(App.TASK);
+
+            using (StreamWriter sw = File.CreateText(App.TASK))
+                await sw.WriteLineAsync(JsonConvert.SerializeObject(TO));
+        }
 
         #region Window Events
         private void DragWindow(object sender, MouseButtonEventArgs e)
