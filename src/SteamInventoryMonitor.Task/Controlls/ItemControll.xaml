@@ -130,7 +130,7 @@
                             <TextBlock Text="Edit" FontSize="10"/>
                         </StackPanel>
                     </Button>
-                    <Button x:Name="btnRemove" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Width="100" Margin="10,0" Opacity="0">
+                    <Button x:Name="btnRemove" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Width="100" Margin="10,0" Opacity="0" Click="btnRemoveClick">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="11"/>
                             <TextBlock Text="Remove" FontSize="10"/>
@@ -162,7 +162,6 @@
                                 <TextBlock Text="Cancel" FontSize="10"/>
                             </StackPanel>
                         </Button>
-                       
                     </StackPanel>
                 </StackPanel>
             </Grid>

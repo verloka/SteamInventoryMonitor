@@ -17,7 +17,8 @@ namespace SteamInventoryMonitor.Task.Controlls
 {
     public partial class ItemControll : UserControl
     {
-        public event Action<string, int, int> Updated;
+        public event Action<string, int, int, bool> Updated;
+        public event Action<string, bool> Removed;
 
         public string UID
         {
@@ -25,6 +26,13 @@ namespace SteamInventoryMonitor.Task.Controlls
             set { SetValue(UIDProperty, value); }
         }
         public static readonly DependencyProperty UIDProperty = DependencyProperty.Register("UID", typeof(string), typeof(ItemControll), null);
+
+        public bool NF
+        {
+            get { return (bool)GetValue(NFProperty); }
+            set { SetValue(NFProperty, value); }
+        }
+        public static readonly DependencyProperty NFProperty = DependencyProperty.Register("NF", typeof(bool), typeof(ItemControll), null);
 
         public string ItemName
         {
@@ -73,8 +81,9 @@ namespace SteamInventoryMonitor.Task.Controlls
         }
         private void btnDoneClick(object sender, RoutedEventArgs e)
         {
-            Updated?.Invoke(UID, CompareMethod, CompareArgument);
+            Updated?.Invoke(UID, CompareMethod, CompareArgument, NF);
             UpdateDescription();
         }
+        private void btnRemoveClick(object sender, RoutedEventArgs e) => Removed?.Invoke(UID, NF);
     }
 }

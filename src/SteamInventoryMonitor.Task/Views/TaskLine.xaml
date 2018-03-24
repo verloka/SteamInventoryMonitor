@@ -9,17 +9,13 @@
       Title="TaskLine" Loaded="pageLoaded">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
-        </Grid.RowDefinitions>
         <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-            <StackPanel x:Name="spItems" Margin="0,0,0,50"/>
+            <StackPanel x:Name="spItems" Margin="0,0,0,80"/>
         </ScrollViewer>
-        <Button x:Name="btnRemove" Grid.Row="1" VerticalAlignment="Center" Width="150" HorizontalAlignment="Right" Margin="15">
+        <Button x:Name="btnRemove" Grid.Row="1" Width="200" HorizontalAlignment="Center" Margin="15" Click="btnRemoveClick" VerticalAlignment="Bottom">
             <StackPanel Orientation="Horizontal">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                <TextBlock Text="Remove"/>
+                <TextBlock Text="Delete all items"/>
             </StackPanel>
         </Button>
     </Grid>

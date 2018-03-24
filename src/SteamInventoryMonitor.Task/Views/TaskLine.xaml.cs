@@ -1,18 +1,6 @@
 ﻿using SteamInventoryMonitor.Task.Controlls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SteamInventoryMonitor.Task.Views
 {
@@ -23,19 +11,40 @@ namespace SteamInventoryMonitor.Task.Views
             InitializeComponent();
         }
 
-        private void pageLoaded(object sender, RoutedEventArgs e)
+        void LoadItems()
         {
+            spItems.Children.Clear();
             foreach (var item in App.MAIN_WINDOW.TO.Items)
             {
-                spItems.Children.Add(new ItemControll()
+                ItemControll ctrl = new ItemControll()
                 {
                     UID = item.UID,
                     ItemName = item.Name,
                     CompareMethod = item.CompareMethod,
                     CompareArgument = item.CompareArgument,
-                    ItemIcon = item.IconUrl
-                });
+                    ItemIcon = item.IconUrl,
+                    NF = false
+                };
+
+                ctrl.Updated += CtrlUpdated;
+                ctrl.Removed += CtrlRemoved;
+
+                spItems.Children.Add(ctrl);
             }
+        }
+
+        private void pageLoaded(object sender, RoutedEventArgs e) => LoadItems();
+
+        private void CtrlRemoved(string uid, bool nf)
+        {
+            App.MAIN_WINDOW.TO.Remove(uid, nf);
+            LoadItems();
+        }
+        private void CtrlUpdated(string uid, int compareMethod, int compareArgument, bool nf) => App.MAIN_WINDOW.TO.Update(uid, compareMethod, compareArgument, nf);
+        private void btnRemoveClick(object sender, RoutedEventArgs e)
+        {
+            App.MAIN_WINDOW.TO.Clear();
+            spItems?.Children.Clear();
         }
     }
 }

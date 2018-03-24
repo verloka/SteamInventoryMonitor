@@ -25,7 +25,7 @@ namespace SteamInventoryMonitor.Task
             timer = new DispatcherTimer();
             timer.Tick += TimerTick;
             timer.Interval = new TimeSpan(0, 0, 60);
-            timer.Start();
+            //timer.Start();
         }
 
         public Task<bool> Parsing()
@@ -140,8 +140,15 @@ namespace SteamInventoryMonitor.Task
             App.MAIN_WINDOW = this;
 
             TO = File.Exists(App.TASK) ? JsonConvert.DeserializeObject<TaskObject>(File.ReadAllText(App.TASK)) : new TaskObject();
+            TO.Updated += TOUpdated;
 
             SetupViewMode(1);
+        }
+
+        private async void TOUpdated()
+        {
+            using (StreamWriter sw = File.CreateText(App.TASK))
+                await sw.WriteLineAsync(JsonConvert.SerializeObject(TO));
         }
         private async void TimerTick(object sender, EventArgs e)
         {
