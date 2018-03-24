@@ -10,6 +10,7 @@ using System.Net;
 using SteamInventoryMonitor.Models;
 using System.Windows.Threading;
 using System.Collections.Generic;
+using Verloka.HelperLib.Settings;
 
 namespace SteamInventoryMonitor.Task
 {
@@ -20,13 +21,18 @@ namespace SteamInventoryMonitor.Task
         DispatcherTimer timer;
         List<TaskItem> Finded;
 
+        RegSettings rs;
+
         public MainWindow()
         {
+            rs = new RegSettings("SteamInventoryMonitor");
+            App.NOTIFICATION_DELAY_S = rs.GetValue("NOTIFICATION_DELAY_S", 5);
+
             InitializeComponent();
 
             timer = new DispatcherTimer();
             timer.Tick += TimerTick;
-            timer.Interval = new TimeSpan(0, 0, 15);
+            timer.Interval = new TimeSpan(0, 0, rs.GetValue("UpdateTimerDelay", 60));
             timer.Start();
         }
 
@@ -88,13 +94,11 @@ namespace SteamInventoryMonitor.Task
                     return false;
             }
         }
-        public Task<bool> Parsing()
+        public Task<bool> UpdateInformation()
         {
             return System.Threading.Tasks.Task.Factory.StartNew(() =>
             {
-                TO = File.Exists(App.TASK) ? JsonConvert.DeserializeObject<TaskObject>(File.ReadAllText(App.TASK)) : new TaskObject();
-
-                if (TO.IsEmpty)
+                if (TO == null || TO.IsEmpty)
                     return false;
 
                 var items = TO.Items.Concat(TO.ItemsNF);
@@ -107,8 +111,6 @@ namespace SteamInventoryMonitor.Task
 
                 foreach (var owner in id64)
                 {
-                    
-
                     //group by AppID
                     var appid = from invs in owner
                                 group invs by invs.AppId into invGroup
@@ -119,8 +121,9 @@ namespace SteamInventoryMonitor.Task
                     //parse Inventories
                     foreach (var inv in appid)
                     {
-                        var b = SearchItem(inv).Result;
-                        //return b.Item1 && b.Item2;
+                        var d = SearchItems(inv);
+                        d.Wait();
+                        Finded.AddRange(d.Result);
                     }
                 }
 
@@ -128,14 +131,14 @@ namespace SteamInventoryMonitor.Task
             });
         }
 
-        //bool 1 - success
-        //bool 2 - finded
-        Task<bool> SearchItem(IEnumerable<TaskItem> items, string lid = "", int count = 5000)
+        Task<List<TaskItem>> SearchItems(IEnumerable<TaskItem> items, string lid = "", int count = 5000)
         {
             return System.Threading.Tasks.Task.Factory.StartNew(() =>
             {
                 string lastid = lid;
                 string tail = string.IsNullOrWhiteSpace(lastid) ? string.Empty : $"&start_assetid={lastid}";
+
+                List<TaskItem> tis = new List<TaskItem>();
 
                 string str = $"http://steamcommunity.com/inventory/{items.First().OwnerID64}/{items.First().AppId}/{items.First().AppContext}?l={App.LANGUAGE}&count={count}{tail}";
 
@@ -157,21 +160,22 @@ namespace SteamInventoryMonitor.Task
                                             amount++;
 
                                     if (Pred(amount, item.CompareArgument, item.CompareMethod))
-                                        Finded.Add(item);
-
-                                    return true;
+                                        tis.Add(item);
+                                    
                                 }
                             }
 
 
                         if (inv.Next)
-                            return SearchItem(items, inv.last_assetid).Result;
+                        {
+                            var d = SearchItems(items.Except(tis), inv.last_assetid);
+                            d.Wait();
+                            return d.Result;
+                        }
                     }
-                    else
-                        return false;
                 }
 
-                return false;
+                return tis;
             });
         }
 
@@ -208,15 +212,8 @@ namespace SteamInventoryMonitor.Task
 
             Finded = new List<TaskItem>();
 
-            if (await Parsing())
-                if (Finded.Count == 1)
-                    (new NotificationWindow()
-                    {
-                        NotificationTitle = Finded[0].Name,
-                        NotificationMsg = "Your item was found! Enjoy, Dear!",
-                        NotificationIcon = Finded[0].IconUrl
-                    }).Show();
-                else
+            if (await UpdateInformation())
+                if (Finded.Count > 1)
                 {
                     Random rnd = new Random((int)DateTime.Now.Ticks);
 
@@ -227,6 +224,16 @@ namespace SteamInventoryMonitor.Task
                         NotificationIcon = Finded[rnd.Next(Finded.Count)].IconUrl
                     }).Show();
                 }
+                else
+                {
+                    (new NotificationWindow()
+                    {
+                        NotificationTitle = Finded[0].Name,
+                        NotificationMsg = "Your item was found! Enjoy, Dear!",
+                        NotificationIcon = Finded[0].IconUrl
+                    }).Show();
+                }
+
 
             timer.Start();
         }

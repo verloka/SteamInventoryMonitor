@@ -34,6 +34,20 @@ namespace SteamInventoryMonitor.Task.Controlls
         }
         public static readonly DependencyProperty NFProperty = DependencyProperty.Register("NF", typeof(bool), typeof(ItemControll), null);
 
+        public string UserName
+        {
+            get { return GetValue(UserNameProperty) as string; }
+            set { SetValue(UserNameProperty, value); }
+        }
+        public static readonly DependencyProperty UserNameProperty = DependencyProperty.Register("UserName", typeof(string), typeof(ItemControll), null);
+
+        public string UserIcon
+        {
+            get { return GetValue(UserIconProperty) as string; }
+            set { SetValue(UserIconProperty, value); }
+        }
+        public static readonly DependencyProperty UserIconProperty = DependencyProperty.Register("UserIcon", typeof(string), typeof(ItemControll), null);
+
         public string ItemName
         {
             get { return GetValue(InventoryNameProperty) as string; }

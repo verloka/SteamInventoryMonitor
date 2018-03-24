@@ -20,6 +20,8 @@ namespace SteamInventoryMonitor.Task.Views
                 {
                     UID = item.UID,
                     ItemName = item.Name,
+                    UserName = item.OwnerName,
+                    UserIcon = item.OwnerAvatar,
                     CompareMethod = item.CompareMethod,
                     CompareArgument = item.CompareArgument,
                     ItemIcon = item.IconUrl,

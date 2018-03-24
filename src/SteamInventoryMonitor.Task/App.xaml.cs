@@ -14,6 +14,7 @@ namespace SteamInventoryMonitor.Task
         public static MainWindow MAIN_WINDOW;
 
         public static string LANGUAGE = "english";
+        public static int NOTIFICATION_DELAY_S = 5;
         public static string TASK = $"{Directory.GetCurrentDirectory()}/Data/task.json";
         public static string IMG_URL = "https://steamcommunity-a.akamaihd.net/economy/image/";
     }

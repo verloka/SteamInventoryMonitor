@@ -90,7 +90,9 @@ namespace SteamInventoryMonitor.Views
                                     AppContext = searchAppcontext,
                                     AssetId = item.classid,
                                     IconUrl = $"{App.IMG_URL}{item.icon_url}",
-                                    OwnerID64 = App.ID64
+                                    OwnerID64 = App.ID64,
+                                    OwnerName = Player.personaname,
+                                    OwnerAvatar = Player.avatarmedium
                                 };
 
                                 SelectedItem.SetVar("type", item.type);

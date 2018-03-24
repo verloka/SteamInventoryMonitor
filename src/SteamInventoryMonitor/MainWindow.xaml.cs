@@ -19,6 +19,16 @@ namespace SteamInventoryMonitor
             get => rs.GetValue("ShowEmptyInventories", false);
             set => rs.SetValue("ShowEmptyInventories", value);
         }
+        public int UpdateTimerDelay
+        {
+            get => rs.GetValue("UpdateTimerDelay", 1) / 60;
+            set => rs.SetValue("UpdateTimerDelay", value * 60);
+        }
+        public int NOTIFICATION_DELAY_S
+        {
+            get => rs.GetValue("NOTIFICATION_DELAY_S", 5);
+            set => rs.SetValue("NOTIFICATION_DELAY_S", value);
+        }
         public bool CashingImages
         {
             get => rs.GetValue("CashingImages", true);
@@ -60,7 +70,7 @@ namespace SteamInventoryMonitor
             DataContext = this;
         }
 
-        public void AddItem(TaskItem ti)
+        public async void AddItem(TaskItem ti)
         {
             TI = ti;
 
@@ -80,8 +90,11 @@ namespace SteamInventoryMonitor
 
             IsNotFound = false;
             gridAdd.Visibility = Visibility.Visible;
+
+            using (StreamWriter sw = File.CreateText(App.TASK))
+                await sw.WriteLineAsync(JsonConvert.SerializeObject(TO));
         }
-        public void AddItem(string name, string appid, int apctx)
+        public async void AddItem(string name, string appid, int apctx)
         {
             ItemName = name;
             AppId = appid;
@@ -103,6 +116,9 @@ namespace SteamInventoryMonitor
 
             IsNotFound = true;
             gridAdd.Visibility = Visibility.Visible;
+
+            using (StreamWriter sw = File.CreateText(App.TASK))
+                await sw.WriteLineAsync(JsonConvert.SerializeObject(TO));
         }
         public void ShowAnimGrid(bool show, string text)
         {
@@ -155,11 +171,6 @@ namespace SteamInventoryMonitor
         private void btnCloseAboutClick(object sender, RoutedEventArgs e) => ShowAbout(false);
         private void menuItemAboutClick(object sender, RoutedEventArgs e) => ShowAbout(true);
         private void menuItemExitClick(object sender, RoutedEventArgs e) => Close();
-        private async void windowClosing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            using (StreamWriter sw = File.CreateText(App.TASK))
-                await sw.WriteLineAsync(JsonConvert.SerializeObject(TO));
-        }
         private void btnAddClick(object sender, RoutedEventArgs e)
         {
             int.TryParse(tbValue.Text, out int i);

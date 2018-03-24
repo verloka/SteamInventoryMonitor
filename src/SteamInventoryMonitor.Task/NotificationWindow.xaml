@@ -55,7 +55,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Path=NotificationTitle, FallbackValue=title}" Foreground="#FFC5C5C5" TextWrapping="NoWrap" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold"/>
                 <Button x:Name="btnCloseNotification" Grid.Row="0" FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Width="28" Height="28" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Column="1" Click="btnCloseNotificationClick" Style="{DynamicResource ButtonStyleBorderless}"/>
-                <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Source="Icons/gems.png" Margin="7"/>
+                <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Source="{Binding Path=NotificationIcon, FallbackValue=Icons/gems.png}" Margin="7"/>  
                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=NotificationMsg, FallbackValue=msg}" Foreground="#FFC5C5C5" TextWrapping="Wrap" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Grid>
         </Border>

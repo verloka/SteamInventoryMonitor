@@ -39,7 +39,7 @@ namespace SteamInventoryMonitor.Task
             player.Load();
             timer = new DispatcherTimer();
             timer.Tick += TimerTick;
-            timer.Interval = new TimeSpan(0, 0, 4);
+            timer.Interval = new TimeSpan(0, 0, App.NOTIFICATION_DELAY_S);
         }
 
         private void TimerTick(object sender, EventArgs e)
