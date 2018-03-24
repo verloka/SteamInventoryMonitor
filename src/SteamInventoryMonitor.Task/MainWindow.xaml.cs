@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Net;
 using SteamInventoryMonitor.Models;
 using System.Windows.Threading;
+using System.Collections.Generic;
 
 namespace SteamInventoryMonitor.Task
 {
@@ -17,6 +18,7 @@ namespace SteamInventoryMonitor.Task
         public TaskObject TO { get; private set; }
 
         DispatcherTimer timer;
+        List<TaskItem> Finded;
 
         public MainWindow()
         {
@@ -24,51 +26,10 @@ namespace SteamInventoryMonitor.Task
 
             timer = new DispatcherTimer();
             timer.Tick += TimerTick;
-            timer.Interval = new TimeSpan(0, 0, 60);
-            //timer.Start();
+            timer.Interval = new TimeSpan(0, 0, 15);
+            timer.Start();
         }
 
-        public Task<bool> Parsing()
-        {
-            return System.Threading.Tasks.Task.Factory.StartNew(() =>
-                {
-                    TO = File.Exists(App.TASK) ? JsonConvert.DeserializeObject<TaskObject>(File.ReadAllText(App.TASK)) : new TaskObject();
-
-                    if (TO.IsEmpty)
-                        return false;
-
-                    var items = TO.Items.Concat(TO.ItemsNF);
-
-                    var owners = from own in items
-                                 group own by own.OwnerID64 into ownGroup
-                                 select new
-                                 {
-                                     ID64 = ownGroup.Key,
-                                     OWNERS = from i in ownGroup
-                                              select i
-                                 };
-
-                    foreach (var owner in owners)
-                    {
-                        var inventories = from invs in owner.OWNERS
-                                          group invs by invs.AppId into invGroup
-                                          select from i in invGroup
-                                                 select i;
-
-                        foreach (var inv in inventories)
-                        {
-                            foreach (var item in inv)
-                            {
-                                var b = SearchItem(owner.ID64, item.Name, item.AppId, item.AppContext).Result;
-
-                                return b.Item1 && b.Item2;
-                            }
-                        }
-                    }
-
-                    return false;
-                });
-        }
         public void SetupViewMode(int modeNumber)
         {
             switch (modeNumber)
@@ -86,15 +47,97 @@ namespace SteamInventoryMonitor.Task
                     break;
             }
         }
+        decimal RandomNumber(Random rnd, int precision, int scale)
+        {
+            if (rnd == null)
+                throw new ArgumentNullException("randomNumberGenerator");
+            if (!(precision >= 1 && precision <= 28))
+                throw new ArgumentOutOfRangeException("precision", precision, "Precision must be between 1 and 28.");
+            if (!(scale >= 0 && scale <= precision))
+                throw new ArgumentOutOfRangeException("scale", precision, "Scale must be between 0 and precision.");
 
-        Task<Tuple<bool, bool>> SearchItem(string id64, string name, string appid, int appcontxt, string lid = "", int count = 5000)
+            Decimal d = 0m;
+            for (int i = 0; i < precision; i++)
+            {
+                int r = rnd.Next(0, 10);
+                d = d * 10m + r;
+            }
+            for (int s = 0; s < scale; s++)
+            {
+                d /= 10m;
+            }
+            return d;
+        }
+        public bool Pred(int value, int argument, int method)
+        {
+            switch (method)
+            {
+                case 0 when value == argument:
+                    return true;
+                case 1 when value != argument:
+                    return true;
+                case 2 when value > argument:
+                    return true;
+                case 3 when value >= argument:
+                    return true;
+                case 4 when value < argument:
+                    return true;
+                case 5 when value <= argument:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        public Task<bool> Parsing()
+        {
+            return System.Threading.Tasks.Task.Factory.StartNew(() =>
+            {
+                TO = File.Exists(App.TASK) ? JsonConvert.DeserializeObject<TaskObject>(File.ReadAllText(App.TASK)) : new TaskObject();
+
+                if (TO.IsEmpty)
+                    return false;
+
+                var items = TO.Items.Concat(TO.ItemsNF);
+
+                //group by ID64
+                var id64 = from own in items
+                           group own by own.OwnerID64 into ownGroup
+                           select from i in ownGroup
+                                  select i;
+
+                foreach (var owner in id64)
+                {
+                    
+
+                    //group by AppID
+                    var appid = from invs in owner
+                                group invs by invs.AppId into invGroup
+                                select from i in invGroup
+                                       select i;
+
+
+                    //parse Inventories
+                    foreach (var inv in appid)
+                    {
+                        var b = SearchItem(inv).Result;
+                        //return b.Item1 && b.Item2;
+                    }
+                }
+
+                return Finded.Count > 0;
+            });
+        }
+
+        //bool 1 - success
+        //bool 2 - finded
+        Task<bool> SearchItem(IEnumerable<TaskItem> items, string lid = "", int count = 5000)
         {
             return System.Threading.Tasks.Task.Factory.StartNew(() =>
             {
                 string lastid = lid;
                 string tail = string.IsNullOrWhiteSpace(lastid) ? string.Empty : $"&start_assetid={lastid}";
 
-                string str = $"http://steamcommunity.com/inventory/{id64}/{appid}/{appcontxt}?l={App.LANGUAGE}&count={count}{tail}";
+                string str = $"http://steamcommunity.com/inventory/{items.First().OwnerID64}/{items.First().AppId}/{items.First().AppContext}?l={App.LANGUAGE}&count={count}{tail}";
 
                 using (WebClient wc = new WebClient())
                 {
@@ -102,27 +145,33 @@ namespace SteamInventoryMonitor.Task
 
                     if (inv.Success)
                     {
-                        foreach (var item in inv.descriptions)
-                            if (item.name == name)
+                        foreach (var desc in inv.descriptions)
+                            foreach (var item in items)
                             {
-                                int amount = 0;
+                                if (desc.name == item.Name)
+                                {
+                                    int amount = 0;
 
-                                foreach (var item2 in inv.assets)
-                                    if (item.classid == item2.classid)
-                                        amount++;
+                                    foreach (var item2 in inv.assets)
+                                        if (desc.classid == item2.classid)
+                                            amount++;
 
-                                //TODO
+                                    if (Pred(amount, item.CompareArgument, item.CompareMethod))
+                                        Finded.Add(item);
 
-                                return new Tuple<bool, bool>(true, true);
+                                    return true;
+                                }
                             }
+
+
                         if (inv.Next)
-                            return SearchItem(id64, name, appid, appcontxt, inv.last_assetid).Result;
-                        else
-                            return new Tuple<bool, bool>(true, false);
+                            return SearchItem(items, inv.last_assetid).Result;
                     }
                     else
-                        return new Tuple<bool, bool>(false, false);
+                        return false;
                 }
+
+                return false;
             });
         }
 
@@ -144,18 +193,40 @@ namespace SteamInventoryMonitor.Task
 
             SetupViewMode(1);
         }
-
         private async void TOUpdated()
         {
+            if (File.Exists(App.TASK))
+                File.Delete(App.TASK);
+
             using (StreamWriter sw = File.CreateText(App.TASK))
                 await sw.WriteLineAsync(JsonConvert.SerializeObject(TO));
         }
         private async void TimerTick(object sender, EventArgs e)
         {
-            bool b = await Parsing();
+            if (Finded != null)
+                Finded.Clear();
 
-            if (b)
-                (new NotificationWindow() { NotificationTitle = "Hi!", NotificationMsg = "Your item was found! Enjoy, Dear!" }).Show();
+            Finded = new List<TaskItem>();
+
+            if (await Parsing())
+                if (Finded.Count == 1)
+                    (new NotificationWindow()
+                    {
+                        NotificationTitle = Finded[0].Name,
+                        NotificationMsg = "Your item was found! Enjoy, Dear!",
+                        NotificationIcon = Finded[0].IconUrl
+                    }).Show();
+                else
+                {
+                    Random rnd = new Random((int)DateTime.Now.Ticks);
+
+                    (new NotificationWindow()
+                    {
+                        NotificationTitle = $"Items: [{Finded.Count}]",
+                        NotificationMsg = "Your items was found! Enjoy, Dear!",
+                        NotificationIcon = Finded[rnd.Next(Finded.Count)].IconUrl
+                    }).Show();
+                }
 
             timer.Start();
         }
