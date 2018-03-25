@@ -20,6 +20,7 @@ namespace SteamInventoryMonitor.Task
 
         DispatcherTimer timer;
         List<TaskItem> Finded;
+        List<Item> itemAssetsBuffer;
 
         RegSettings rs;
 
@@ -94,7 +95,8 @@ namespace SteamInventoryMonitor.Task
                     return false;
             }
         }
-        public Task<bool> UpdateInformation()
+
+        Task<bool> UpdateInformation()
         {
             return System.Threading.Tasks.Task.Factory.StartNew(() =>
             {
@@ -121,26 +123,35 @@ namespace SteamInventoryMonitor.Task
                     //parse Inventories
                     foreach (var inv in appid)
                     {
-                        var d = SearchItems(inv);
+                        var d = LoadInventory(owner.First().OwnerID64, inv.First().AppId, inv.First().AppContext);
                         d.Wait();
-                        Finded.AddRange(d.Result);
+
+                        foreach (var item in items)
+                        {
+                            var classIdItems = from i in itemAssetsBuffer
+                                               where i.classid == item.ClassId
+                                               select i;
+
+                            if (Pred(classIdItems.Count(), item.CompareArgument, item.CompareMethod))
+                                Finded.Add(item);
+
+                        }
+
+                        itemAssetsBuffer.Clear();
                     }
                 }
 
                 return Finded.Count > 0;
             });
         }
-
-        Task<List<TaskItem>> SearchItems(IEnumerable<TaskItem> items, string lid = "", int count = 5000)
+        Task<bool> LoadInventory(string id64, string appid, int appcontext, string lid = "", int count = 5000)
         {
             return System.Threading.Tasks.Task.Factory.StartNew(() =>
             {
                 string lastid = lid;
                 string tail = string.IsNullOrWhiteSpace(lastid) ? string.Empty : $"&start_assetid={lastid}";
 
-                List<TaskItem> tis = new List<TaskItem>();
-
-                string str = $"http://steamcommunity.com/inventory/{items.First().OwnerID64}/{items.First().AppId}/{items.First().AppContext}?l={App.LANGUAGE}&count={count}{tail}";
+                string str = $"http://steamcommunity.com/inventory/{id64}/{appid}/{appcontext}?l={App.LANGUAGE}&count={count}{tail}";
 
                 using (WebClient wc = new WebClient())
                 {
@@ -148,34 +159,18 @@ namespace SteamInventoryMonitor.Task
 
                     if (inv.Success)
                     {
-                        foreach (var desc in inv.descriptions)
-                            foreach (var item in items)
-                            {
-                                if (desc.name == item.Name)
-                                {
-                                    int amount = 0;
-
-                                    foreach (var item2 in inv.assets)
-                                        if (desc.classid == item2.classid)
-                                            amount++;
-
-                                    if (Pred(amount, item.CompareArgument, item.CompareMethod))
-                                        tis.Add(item);
-                                    
-                                }
-                            }
-
+                        itemAssetsBuffer.AddRange(inv.assets);
 
                         if (inv.Next)
                         {
-                            var d = SearchItems(items.Except(tis), inv.last_assetid);
+                            var d = LoadInventory(id64, appid, appcontext, inv.last_assetid);
                             d.Wait();
-                            return d.Result;
                         }
+
+                        return true;
                     }
                 }
-
-                return tis;
+                return false;
             });
         }
 
@@ -192,6 +187,9 @@ namespace SteamInventoryMonitor.Task
         {
             App.MAIN_WINDOW = this;
 
+            Finded = new List<TaskItem>();
+            itemAssetsBuffer = new List<Item>();
+
             TO = File.Exists(App.TASK) ? JsonConvert.DeserializeObject<TaskObject>(File.ReadAllText(App.TASK)) : new TaskObject();
             TO.Updated += TOUpdated;
 
@@ -205,14 +203,14 @@ namespace SteamInventoryMonitor.Task
             using (StreamWriter sw = File.CreateText(App.TASK))
                 await sw.WriteLineAsync(JsonConvert.SerializeObject(TO));
         }
-        private async void TimerTick(object sender, EventArgs e)
+        private void TimerTick(object sender, EventArgs e)
         {
-            if (Finded != null)
-                Finded.Clear();
+            Finded.Clear();
 
-            Finded = new List<TaskItem>();
+            var d = UpdateInformation();
+            d.Wait();
 
-            if (await UpdateInformation())
+            if (d.Result)
                 if (Finded.Count > 1)
                 {
                     Random rnd = new Random((int)DateTime.Now.Ticks);

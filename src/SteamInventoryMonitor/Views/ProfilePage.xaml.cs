@@ -88,7 +88,7 @@ namespace SteamInventoryMonitor.Views
                                     Name = item.name,
                                     AppId = searchAppid,
                                     AppContext = searchAppcontext,
-                                    AssetId = item.classid,
+                                    ClassId = item.classid,
                                     IconUrl = $"{App.IMG_URL}{item.icon_url}",
                                     OwnerID64 = App.ID64,
                                     OwnerName = Player.personaname,

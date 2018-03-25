@@ -7,7 +7,7 @@ namespace SteamInventoryMonitor.Model
     {
         public string UID { get; set; }
         public string Name { get; set; }
-        public string AssetId { get; set; }
+        public string ClassId { get; set; }
         public string AppId { get; set; }
         public int AppContext { get; set; }
         public string IconUrl { get; set; }
