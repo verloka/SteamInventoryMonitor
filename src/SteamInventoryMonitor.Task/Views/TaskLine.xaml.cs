@@ -14,7 +14,7 @@ namespace SteamInventoryMonitor.Task.Views
         void LoadItems()
         {
             spItems.Children.Clear();
-            foreach (var item in App.MAIN_WINDOW.TO.Items)
+            foreach (var item in ((MainWindow)Application.Current.MainWindow).TO.Items)
             {
                 ItemControll ctrl = new ItemControll()
                 {
@@ -39,13 +39,13 @@ namespace SteamInventoryMonitor.Task.Views
 
         private void CtrlRemoved(string uid, bool nf)
         {
-            App.MAIN_WINDOW.TO.Remove(uid, nf);
+            ((MainWindow)Application.Current.MainWindow).TO.Remove(uid, nf);
             LoadItems();
         }
-        private void CtrlUpdated(string uid, int compareMethod, int compareArgument, bool nf) => App.MAIN_WINDOW.TO.Update(uid, compareMethod, compareArgument, nf);
+        private void CtrlUpdated(string uid, int compareMethod, int compareArgument, bool nf) => ((MainWindow)Application.Current.MainWindow).TO.Update(uid, compareMethod, compareArgument, nf);
         private void btnRemoveClick(object sender, RoutedEventArgs e)
         {
-            App.MAIN_WINDOW.TO.Clear();
+            ((MainWindow)Application.Current.MainWindow).TO.Clear();
             spItems?.Children.Clear();
         }
     }

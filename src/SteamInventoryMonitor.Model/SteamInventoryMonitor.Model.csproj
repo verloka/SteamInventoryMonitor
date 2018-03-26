@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,12 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Description.cs" />
     <Compile Include="Inventory.cs" />
     <Compile Include="InventoryObject.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemDescription.cs" />
-    <Compile Include="ItemTag.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -54,6 +55,9 @@
     <Compile Include="UserID64.cs" />
     <Compile Include="UserIdResponse.cs" />
     <Compile Include="UserInformation.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

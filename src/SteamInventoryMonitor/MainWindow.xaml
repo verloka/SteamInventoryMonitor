@@ -71,6 +71,11 @@
                     <MenuItem.Icon>
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" FontSize="16"/>
                     </MenuItem.Icon>
+                    <MenuItem x:Name="menuItemShowTask" Header="Show Task Line" Click="menuItemShowTaskClick">
+                        <MenuItem.Icon>
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7B8;" FontSize="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <Separator Background="#FF686868" BorderBrush="#FF686868"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Current state: "/>

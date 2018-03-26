@@ -58,8 +58,8 @@ namespace SteamInventoryMonitor.Views
                 {
                     Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
 
-                    if (inv.Success)
-                        return inv.total_inventory_count;
+                    if (inv.IsSuccess)
+                        return inv.InventoryCount;
                 }
 
                 return 0;
@@ -78,9 +78,9 @@ namespace SteamInventoryMonitor.Views
                 {
                     Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
 
-                    if (inv.Success)
+                    if (inv.IsSuccess)
                     {
-                        foreach (var item in inv.descriptions)
+                        foreach (var item in inv.Descriptions)
                             if (item.name == name)
                             {
                                 SelectedItem = new TaskItem
@@ -102,7 +102,7 @@ namespace SteamInventoryMonitor.Views
 
                                 int amount = 0;
 
-                                foreach (var item2 in inv.assets)
+                                foreach (var item2 in inv.Assets)
                                     if (item.classid == item2.classid)
                                         amount++;
 
@@ -110,8 +110,8 @@ namespace SteamInventoryMonitor.Views
 
                                 return new Tuple<bool, bool>(true, true);
                             }
-                        if (inv.Next)
-                            return SearchItem(name, inv.last_assetid).Result;
+                        if (inv.IsNext)
+                            return SearchItem(name, inv.LastAssteId).Result;
                         else
                             return new Tuple<bool, bool>(true, false);
                     }

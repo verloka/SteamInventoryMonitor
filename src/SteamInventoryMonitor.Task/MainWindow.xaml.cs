@@ -21,6 +21,7 @@ namespace SteamInventoryMonitor.Task
         DispatcherTimer timer;
         List<TaskItem> Finded;
         List<Item> itemAssetsBuffer;
+        System.Windows.Forms.NotifyIcon notifyIcon;
 
         RegSettings rs;
 
@@ -157,13 +158,13 @@ namespace SteamInventoryMonitor.Task
                 {
                     Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
 
-                    if (inv.Success)
+                    if (inv.IsSuccess)
                     {
-                        itemAssetsBuffer.AddRange(inv.assets);
+                        itemAssetsBuffer.AddRange(inv.Assets);
 
-                        if (inv.Next)
+                        if (inv.IsNext)
                         {
-                            var d = LoadInventory(id64, appid, appcontext, inv.last_assetid);
+                            var d = LoadInventory(id64, appid, appcontext, inv.LastAssteId);
                             d.Wait();
                         }
 
@@ -180,12 +181,27 @@ namespace SteamInventoryMonitor.Task
             try { DragMove(); }
             catch { }
         }
-        private void btnCloseWinodwClick(object sender, RoutedEventArgs e) => Close();
+        private void btnCloseWinodwClick(object sender, RoutedEventArgs e) => Hide();
         #endregion
 
         private void windowLoaded(object sender, RoutedEventArgs e)
         {
-            App.MAIN_WINDOW = this;
+            System.Windows.Forms.ContextMenu contextMenu = new System.Windows.Forms.ContextMenu();
+            contextMenu.MenuItems.Add("Show Sindow", (sh, eh) => Show());
+            contextMenu.MenuItems.Add("Open Task Line", (sh, eh) => SetupViewMode(1));
+            contextMenu.MenuItems.Add("Open Notifications", (sh, eh) => SetupViewMode(2));
+            contextMenu.MenuItems.Add("-");
+            contextMenu.MenuItems.Add("Exit", (sh, eh) => Close());
+
+            notifyIcon = new System.Windows.Forms.NotifyIcon
+            {
+                Text = "Steam Inventory Monitor: Task",
+                Icon = new System.Drawing.Icon($"{Directory.GetCurrentDirectory()}/Icons/chevron.ico"),
+                Visible = true,
+                ContextMenu = contextMenu
+            };
+
+            notifyIcon.DoubleClick += NotifyIconDoubleClick;
 
             Finded = new List<TaskItem>();
             itemAssetsBuffer = new List<Item>();
@@ -195,6 +211,7 @@ namespace SteamInventoryMonitor.Task
 
             SetupViewMode(1);
         }
+        private void NotifyIconDoubleClick(object sender, EventArgs e) => Show();
         private async void TOUpdated()
         {
             if (File.Exists(App.TASK))
@@ -203,14 +220,14 @@ namespace SteamInventoryMonitor.Task
             using (StreamWriter sw = File.CreateText(App.TASK))
                 await sw.WriteLineAsync(JsonConvert.SerializeObject(TO));
         }
-        private void TimerTick(object sender, EventArgs e)
+        private async void TimerTick(object sender, EventArgs e)
         {
             Finded.Clear();
 
-            var d = UpdateInformation();
-            d.Wait();
+            if (await UpdateInformation())
+            {
+                btnNotification.Content = Char.ConvertFromUtf32(0xE7E7);
 
-            if (d.Result)
                 if (Finded.Count > 1)
                 {
                     Random rnd = new Random((int)DateTime.Now.Ticks);
@@ -231,9 +248,13 @@ namespace SteamInventoryMonitor.Task
                         NotificationIcon = Finded[0].IconUrl
                     }).Show();
                 }
+            }
+            else
+                btnNotification.Content = Char.ConvertFromUtf32(0xEC42);
 
 
             timer.Start();
         }
+        private void windowClosing(object sender, System.ComponentModel.CancelEventArgs e) => notifyIcon.Visible = false;
     }
 }

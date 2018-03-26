@@ -207,5 +207,6 @@ namespace SteamInventoryMonitor
             if (!char.IsDigit(e.Text, e.Text.Length - 1))
                 e.Handled = true;
         }
+        private void menuItemShowTaskClick(object sender, RoutedEventArgs e) => Process.Start($"{Directory.GetCurrentDirectory()}/SteamInventoryMonitor.Task.exe");
     }
 }
