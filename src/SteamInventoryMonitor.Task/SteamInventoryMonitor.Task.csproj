@@ -80,6 +80,9 @@
     <Compile Include="Controlls\ItemControll.xaml.cs">
       <DependentUpon>ItemControll.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\NotificationLine.xaml.cs">
+      <DependentUpon>NotificationLine.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TaskLine.xaml.cs">
       <DependentUpon>TaskLine.xaml</DependentUpon>
     </Compile>
@@ -122,6 +125,10 @@
     <Page Include="Themes\MetroDark\Theme.Colors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\NotificationLine.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\TaskLine.xaml">
       <SubType>Designer</SubType>

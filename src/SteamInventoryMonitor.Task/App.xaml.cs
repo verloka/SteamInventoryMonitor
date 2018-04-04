@@ -21,7 +21,7 @@ namespace SteamInventoryMonitor.Task
         public static int NOTIFICATION_DELAY_S = 5;
         public static string TASK = $"{Directory.GetCurrentDirectory()}/Data/task.json";
         public static string IMG_URL = "https://steamcommunity-a.akamaihd.net/economy/image/";
-        
+
         private const string MutexName = "SteamInventoryMonitor.Task";
         private readonly Mutex mutex;
         bool CreatedNew;
@@ -29,17 +29,21 @@ namespace SteamInventoryMonitor.Task
         public App()
         {
             mutex = new Mutex(true, MutexName, out CreatedNew);
-            if (!CreatedNew)
-                Current.Shutdown(0);
         }
+
+        MainWindow GetMainWindow(bool Preview) => new MainWindow { IsPreview = Preview };
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            if (!CreatedNew)
-                return;
-
-            MainWindow mw = new MainWindow();
-            mw.Show();
+            if (e.Args.Count() == 0)
+            {
+                if (!CreatedNew)
+                    Current.Shutdown(0);
+                else
+                    GetMainWindow(false).Show();
+            }
+            else if(e.Args[0] == "-pw")
+                GetMainWindow(true).Show();
         }
     }
 }

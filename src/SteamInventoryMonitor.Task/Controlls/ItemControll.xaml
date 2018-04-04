@@ -129,13 +129,13 @@
                 </StackPanel>
                 <Grid x:Name="gridControll" Grid.Column="1" Grid.Row="1" Margin="0">
                     <TextBlock x:Name="tbDesc" Text="Show notification when item == 0 in inventory" VerticalAlignment="Top" Margin="15,0,0,0" TextWrapping="NoWrap" Foreground="#FFC5C5C5" FontSize="14" />
-                    <Button x:Name="btnEdit" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="100" Margin="0,0,120,0" Opacity="0">
+                    <Button x:Name="btnEdit" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Width="100" Margin="0,0,120,0" Opacity="0" Visibility="{Binding Path=Editable}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE70F;" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="11"/>
                             <TextBlock Text="Edit" FontSize="10"/>
                         </StackPanel>
                     </Button>
-                    <Button x:Name="btnRemove" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Width="100" Margin="10,0" Opacity="0" Click="btnRemoveClick">
+                    <Button x:Name="btnRemove" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Width="100" Margin="10,0" Opacity="0" Click="btnRemoveClick" Visibility="{Binding Path=Editable}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" Margin="0,0,10,0" VerticalAlignment="Center" FontSize="11"/>
                             <TextBlock Text="Remove" FontSize="10"/>

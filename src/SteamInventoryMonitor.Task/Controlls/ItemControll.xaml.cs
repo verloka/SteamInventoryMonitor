@@ -34,6 +34,13 @@ namespace SteamInventoryMonitor.Task.Controlls
         }
         public static readonly DependencyProperty NFProperty = DependencyProperty.Register("NF", typeof(bool), typeof(ItemControll), null);
 
+        public bool Editable
+        {
+            get { return (Visibility)GetValue(EditableProperty) == Visibility.Visible ? true : false; }
+            set { SetValue(EditableProperty, value ? Visibility.Visible : Visibility.Collapsed); }
+        }
+        public static readonly DependencyProperty EditableProperty = DependencyProperty.Register("Editable", typeof(Visibility), typeof(ItemControll), null);
+
         public string UserName
         {
             get { return GetValue(UserNameProperty) as string; }

@@ -25,7 +25,8 @@ namespace SteamInventoryMonitor.Task.Views
                     CompareMethod = item.CompareMethod,
                     CompareArgument = item.CompareArgument,
                     ItemIcon = item.IconUrl,
-                    NF = false
+                    NF = false,
+                    Editable = true
                 };
 
                 ctrl.Updated += CtrlUpdated;

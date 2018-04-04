@@ -16,10 +16,11 @@ namespace SteamInventoryMonitor.Task
 {
     public partial class MainWindow : Window
     {
+        public bool IsPreview { get; set; }
         public TaskObject TO { get; private set; }
+        public List<TaskItem> Finded { get; private set; }
 
         DispatcherTimer timer;
-        List<TaskItem> Finded;
         List<Item> itemAssetsBuffer;
         System.Windows.Forms.NotifyIcon notifyIcon;
 
@@ -35,9 +36,14 @@ namespace SteamInventoryMonitor.Task
             timer = new DispatcherTimer();
             timer.Tick += TimerTick;
             timer.Interval = new TimeSpan(0, 0, rs.GetValue("UpdateTimerDelay", 60));
-            timer.Start();
+
+            if (!IsPreview)
+                timer.Start();
+            else
+                Title += " [Preview mode]";
         }
 
+        public void SetupHomeButtonIsVisible(bool visible) => btnHome.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
         public void SetupViewMode(int modeNumber)
         {
             switch (modeNumber)
@@ -51,30 +57,9 @@ namespace SteamInventoryMonitor.Task
                 case 2:
                     Width = 640;
                     Height = 540;
-                    frame.Navigate(new Uri("Views/NotificationEvent.xaml", UriKind.Relative));
+                    frame.Navigate(new Uri("Views/NotificationLine.xaml", UriKind.Relative));
                     break;
             }
-        }
-        decimal RandomNumber(Random rnd, int precision, int scale)
-        {
-            if (rnd == null)
-                throw new ArgumentNullException("randomNumberGenerator");
-            if (!(precision >= 1 && precision <= 28))
-                throw new ArgumentOutOfRangeException("precision", precision, "Precision must be between 1 and 28.");
-            if (!(scale >= 0 && scale <= precision))
-                throw new ArgumentOutOfRangeException("scale", precision, "Scale must be between 0 and precision.");
-
-            Decimal d = 0m;
-            for (int i = 0; i < precision; i++)
-            {
-                int r = rnd.Next(0, 10);
-                d = d * 10m + r;
-            }
-            for (int s = 0; s < scale; s++)
-            {
-                d /= 10m;
-            }
-            return d;
         }
         public bool Pred(int value, int argument, int method)
         {
@@ -97,12 +82,35 @@ namespace SteamInventoryMonitor.Task
             }
         }
 
+        decimal RandomNumber(Random rnd, int precision, int scale)
+        {
+            if (rnd == null)
+                throw new ArgumentNullException("randomNumberGenerator");
+            if (!(precision >= 1 && precision <= 28))
+                throw new ArgumentOutOfRangeException("precision", precision, "Precision must be between 1 and 28.");
+            if (!(scale >= 0 && scale <= precision))
+                throw new ArgumentOutOfRangeException("scale", precision, "Scale must be between 0 and precision.");
+
+            Decimal d = 0m;
+            for (int i = 0; i < precision; i++)
+            {
+                int r = rnd.Next(0, 10);
+                d = d * 10m + r;
+            }
+            for (int s = 0; s < scale; s++)
+            {
+                d /= 10m;
+            }
+            return d;
+        }
         Task<bool> UpdateInformation()
         {
             return System.Threading.Tasks.Task.Factory.StartNew(() =>
             {
                 if (TO == null || TO.IsEmpty)
                     return false;
+
+                List<TaskItem> finded = new List<TaskItem>();
 
                 var items = TO.Items.Concat(TO.ItemsNF);
 
@@ -134,13 +142,16 @@ namespace SteamInventoryMonitor.Task
                                                select i;
 
                             if (Pred(classIdItems.Count(), item.CompareArgument, item.CompareMethod))
-                                Finded.Add(item);
+                                finded.Add(item);
 
                         }
 
                         itemAssetsBuffer.Clear();
                     }
                 }
+
+                Finded.Clear();
+                Finded.AddRange(finded);
 
                 return Finded.Count > 0;
             });
@@ -181,7 +192,13 @@ namespace SteamInventoryMonitor.Task
             try { DragMove(); }
             catch { }
         }
-        private void btnCloseWinodwClick(object sender, RoutedEventArgs e) => Hide();
+        private void btnCloseWinodwClick(object sender, RoutedEventArgs e)
+        {
+            if (IsPreview)
+                Close();
+            else
+                Hide();
+        }
         #endregion
 
         private void windowLoaded(object sender, RoutedEventArgs e)
@@ -197,7 +214,7 @@ namespace SteamInventoryMonitor.Task
             {
                 Text = "Steam Inventory Monitor: Task",
                 Icon = new System.Drawing.Icon($"{Directory.GetCurrentDirectory()}/Icons/chevron.ico"),
-                Visible = true,
+                Visible = !IsPreview,
                 ContextMenu = contextMenu
             };
 
@@ -222,8 +239,6 @@ namespace SteamInventoryMonitor.Task
         }
         private async void TimerTick(object sender, EventArgs e)
         {
-            Finded.Clear();
-
             if (await UpdateInformation())
             {
                 btnNotification.Content = Char.ConvertFromUtf32(0xE7E7);
@@ -256,5 +271,7 @@ namespace SteamInventoryMonitor.Task
             timer.Start();
         }
         private void windowClosing(object sender, System.ComponentModel.CancelEventArgs e) => notifyIcon.Visible = false;
+        private void btnNotificationClick(object sender, RoutedEventArgs e) => SetupViewMode(2);
+        private void btnHomeClick(object sender, RoutedEventArgs e) => SetupViewMode(1);
     }
 }
