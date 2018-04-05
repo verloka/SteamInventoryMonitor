@@ -78,6 +78,11 @@
     <Compile Include="Core\BoolToEnabledConvert.cs" />
     <Compile Include="Core\BoolToVisibilityConvert.cs" />
     <Compile Include="Core\BoolToCollapsedConvert.cs" />
+    <Compile Include="Core\MessageWindowIcon.cs" />
+    <Compile Include="Core\MessageWindowIconColor.cs" />
+    <Compile Include="MessageWindow.xaml.cs">
+      <DependentUpon>MessageWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
@@ -100,6 +105,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MessageWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\MetroDark\MetroDark.MSControls.Core.Implicit.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -228,6 +237,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\chevron.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\soldier.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

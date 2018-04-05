@@ -21,18 +21,27 @@ namespace SteamInventoryMonitor.Views
         {
             return Task.Factory.StartNew(() =>
                 {
-                    string url = $"http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key={App.KEY}&vanityurl={LoginInfo}";
+                    bool result = false;
 
-                    using (WebClient wc = new WebClient())
+                    try
                     {
-                        UserID64 id64 = JsonConvert.DeserializeObject<UserID64>(wc.DownloadString(url));
-                        if (id64.Success)
+                        string url = $"http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key={App.KEY}&vanityurl={LoginInfo}";
+
+                        using (WebClient wc = new WebClient())
                         {
-                            App.ID64 = id64.ID64;
-                            return true;
+                            UserID64 id64 = JsonConvert.DeserializeObject<UserID64>(wc.DownloadString(url));
+                            if (id64.Success)
+                            {
+                                App.ID64 = id64.ID64;
+                                result = true;
+                            }
+                            else
+                                result = false;
                         }
-                        return false;
                     }
+                    catch { result = false; }
+
+                    return result;
                 });
         }
 
@@ -50,7 +59,7 @@ namespace SteamInventoryMonitor.Views
             else
             {
                 App.MAIN_WINDOW.ShowAnimGrid(false, string.Empty);
-                //error msg
+                new MessageWindow("Warning!", "User with that login not found!", Core.MessageWindowIcon.Warning, Core.MessageWindowIconColor.Blue).ShowDialog();
             }
         }
     }

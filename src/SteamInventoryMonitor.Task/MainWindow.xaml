@@ -10,7 +10,10 @@
         Height="450" 
         Width="800" 
         Icon="Icons/icon.ico" 
-        ResizeMode="NoResize" WindowStyle="None" Loaded="windowLoaded" Closing="windowClosing">
+        ResizeMode="NoResize" 
+        WindowStyle="None" 
+        Loaded="windowLoaded" 
+        Closing="windowClosing">
     <Border BorderThickness="1" BorderBrush="#FF007ACC">
         <Grid Background="#FF2D2D30">
             <Grid.RowDefinitions>
@@ -21,9 +24,9 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="32px"/>
+                    <ColumnDefinition Width="32px"/>
+                    <ColumnDefinition Width="32px"/>
                 </Grid.ColumnDefinitions>
                 <Image Grid.Column="0" Source="{Binding Icon, ElementName=window}" Margin="6"/>
                 <TextBlock Grid.Column="1" Text="{Binding Title, ElementName=window, FallbackValue=window}" Foreground="#FFF0EFF1" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Center" FontSize="14"/>
