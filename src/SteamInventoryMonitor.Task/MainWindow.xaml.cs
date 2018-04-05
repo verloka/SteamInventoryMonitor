@@ -16,7 +16,8 @@ namespace SteamInventoryMonitor.Task
 {
     public partial class MainWindow : Window
     {
-        public bool IsPreview { get; set; }
+        public bool IsPreview { get; private set; }
+        public bool IsSilence { get; private set; }
         public TaskObject TO { get; private set; }
         public List<TaskItem> Finded { get; private set; }
 
@@ -26,7 +27,7 @@ namespace SteamInventoryMonitor.Task
 
         RegSettings rs;
 
-        public MainWindow()
+        public MainWindow(bool IsPreview, bool IsSilence = false)
         {
             rs = new RegSettings("SteamInventoryMonitor");
             App.NOTIFICATION_DELAY_S = rs.GetValue("NOTIFICATION_DELAY_S", 5);
@@ -36,6 +37,12 @@ namespace SteamInventoryMonitor.Task
             timer = new DispatcherTimer();
             timer.Tick += TimerTick;
             timer.Interval = new TimeSpan(0, 0, rs.GetValue("UpdateTimerDelay", 60));
+
+            this.IsPreview = IsPreview;
+            this.IsSilence = IsSilence;
+
+            SetupNotifyIcon();
+            SetupCollections();
 
             if (!IsPreview)
                 timer.Start();
@@ -55,8 +62,8 @@ namespace SteamInventoryMonitor.Task
                     frame.Navigate(new Uri("Views/TaskLine.xaml", UriKind.Relative));
                     break;
                 case 2:
-                    Width = 640;
-                    Height = 540;
+                    Width = 800;
+                    Height = 480;
                     frame.Navigate(new Uri("Views/NotificationLine.xaml", UriKind.Relative));
                     break;
             }
@@ -82,6 +89,33 @@ namespace SteamInventoryMonitor.Task
             }
         }
 
+        void SetupCollections()
+        {
+            Finded = new List<TaskItem>();
+            itemAssetsBuffer = new List<Item>();
+
+            TO = File.Exists(App.TASK) ? JsonConvert.DeserializeObject<TaskObject>(File.ReadAllText(App.TASK)) : new TaskObject();
+            TO.Updated += TOUpdated;
+        }
+        void SetupNotifyIcon()
+        {
+            System.Windows.Forms.ContextMenu contextMenu = new System.Windows.Forms.ContextMenu();
+            contextMenu.MenuItems.Add("Show Sindow", (sh, eh) => Show());
+            contextMenu.MenuItems.Add("Open Task Line", (sh, eh) => SetupViewMode(1));
+            contextMenu.MenuItems.Add("Open Notifications", (sh, eh) => SetupViewMode(2));
+            contextMenu.MenuItems.Add("-");
+            contextMenu.MenuItems.Add("Exit", (sh, eh) => Close());
+
+            notifyIcon = new System.Windows.Forms.NotifyIcon
+            {
+                Text = "Steam Inventory Monitor: Task",
+                Icon = new System.Drawing.Icon($"{Directory.GetCurrentDirectory()}/Icons/chevron.ico"),
+                Visible = !IsPreview,
+                ContextMenu = contextMenu
+            };
+
+            notifyIcon.DoubleClick += NotifyIconDoubleClick;
+        }
         decimal RandomNumber(Random rnd, int precision, int scale)
         {
             if (rnd == null)
@@ -201,33 +235,7 @@ namespace SteamInventoryMonitor.Task
         }
         #endregion
 
-        private void windowLoaded(object sender, RoutedEventArgs e)
-        {
-            System.Windows.Forms.ContextMenu contextMenu = new System.Windows.Forms.ContextMenu();
-            contextMenu.MenuItems.Add("Show Sindow", (sh, eh) => Show());
-            contextMenu.MenuItems.Add("Open Task Line", (sh, eh) => SetupViewMode(1));
-            contextMenu.MenuItems.Add("Open Notifications", (sh, eh) => SetupViewMode(2));
-            contextMenu.MenuItems.Add("-");
-            contextMenu.MenuItems.Add("Exit", (sh, eh) => Close());
-
-            notifyIcon = new System.Windows.Forms.NotifyIcon
-            {
-                Text = "Steam Inventory Monitor: Task",
-                Icon = new System.Drawing.Icon($"{Directory.GetCurrentDirectory()}/Icons/chevron.ico"),
-                Visible = !IsPreview,
-                ContextMenu = contextMenu
-            };
-
-            notifyIcon.DoubleClick += NotifyIconDoubleClick;
-
-            Finded = new List<TaskItem>();
-            itemAssetsBuffer = new List<Item>();
-
-            TO = File.Exists(App.TASK) ? JsonConvert.DeserializeObject<TaskObject>(File.ReadAllText(App.TASK)) : new TaskObject();
-            TO.Updated += TOUpdated;
-
-            SetupViewMode(1);
-        }
+        private void windowLoaded(object sender, RoutedEventArgs e) => SetupViewMode(1);
         private void NotifyIconDoubleClick(object sender, EventArgs e) => Show();
         private async void TOUpdated()
         {

@@ -31,19 +31,16 @@ namespace SteamInventoryMonitor.Task
             mutex = new Mutex(true, MutexName, out CreatedNew);
         }
 
-        MainWindow GetMainWindow(bool Preview) => new MainWindow { IsPreview = Preview };
-
         protected override void OnStartup(StartupEventArgs e)
         {
             if (e.Args.Count() == 0)
             {
-                if (!CreatedNew)
-                    Current.Shutdown(0);
-                else
-                    GetMainWindow(false).Show();
+                if (!CreatedNew) Current.Shutdown(0);
+                else new MainWindow(false).Show();
             }
-            else if(e.Args[0] == "-pw")
-                GetMainWindow(true).Show();
+
+            else if (e.Args[0] == "-sl") new MainWindow(false, true);
+            else if (e.Args[0] == "-pw") new MainWindow(true).Show();
         }
     }
 }
