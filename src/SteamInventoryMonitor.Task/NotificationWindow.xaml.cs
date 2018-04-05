@@ -9,6 +9,9 @@ namespace SteamInventoryMonitor.Task
     {
         SoundPlayer player = new SoundPlayer("Sounds/open-ended.wav");
         DispatcherTimer timer;
+        bool pressed;
+
+        public event Action Clicked;
 
         public string NotificationTitle
         {
@@ -68,5 +71,15 @@ namespace SteamInventoryMonitor.Task
             timer.Start();
             player.Play();
         }
+        private void gridMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e) => pressed = true;
+        private void gridMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (pressed)
+            {
+                pressed = false;
+                Clicked?.Invoke();
+            }
+        }
+        private void gridMouseLeave(object sender, System.Windows.Input.MouseEventArgs e) => pressed = false;
     }
 }

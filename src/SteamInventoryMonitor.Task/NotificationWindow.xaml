@@ -41,7 +41,7 @@
             <BeginStoryboard x:Name="CloseNotification_BeginStoryboard1" Storyboard="{StaticResource CloseNotification}"/>
         </EventTrigger>
     </Window.Triggers>
-    <Grid>
+    <Grid MouseLeftButtonDown="gridMouseLeftButtonDown" MouseLeftButtonUp="gridMouseLeftButtonUp" MouseLeave="gridMouseLeave">
         <CheckBox x:Name="cbHide" Visibility="Collapsed" IsChecked="False"/>
         <Border x:Name="rootBorder" BorderBrush="#FF007ACC" Background="#FF181818" BorderThickness="1"  Width="300" HorizontalAlignment="Right">
             <Grid>

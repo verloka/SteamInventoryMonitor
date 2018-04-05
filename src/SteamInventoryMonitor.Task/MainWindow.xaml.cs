@@ -251,26 +251,16 @@ namespace SteamInventoryMonitor.Task
             {
                 btnNotification.Content = Char.ConvertFromUtf32(0xE7E7);
 
-                if (Finded.Count > 1)
-                {
-                    Random rnd = new Random((int)DateTime.Now.Ticks);
+                NotificationWindow nw = new NotificationWindow();
+                nw.Clicked += NwClicked;
 
-                    (new NotificationWindow()
-                    {
-                        NotificationTitle = $"Items: [{Finded.Count}]",
-                        NotificationMsg = "Your items was found! Enjoy, Dear!",
-                        NotificationIcon = Finded[rnd.Next(Finded.Count)].IconUrl
-                    }).Show();
-                }
-                else
-                {
-                    (new NotificationWindow()
-                    {
-                        NotificationTitle = Finded[0].Name,
-                        NotificationMsg = "Your item was found! Enjoy, Dear!",
-                        NotificationIcon = Finded[0].IconUrl
-                    }).Show();
-                }
+                Random rnd = new Random((int)DateTime.Now.Ticks);
+
+                nw.NotificationTitle = Finded.Count > 1 ? $"Items: [{Finded.Count}]" : Finded[0].Name;
+                nw.NotificationMsg = Finded.Count > 1 ?  "Your items was found! Enjoy, Dear!" : "Your item was found! Enjoy, Dear!";
+                nw.NotificationIcon = Finded.Count > 1 ?  Finded[rnd.Next(Finded.Count)].IconUrl : Finded[0].IconUrl;
+
+                nw.Show();
             }
             else
                 btnNotification.Content = Char.ConvertFromUtf32(0xEC42);
@@ -278,8 +268,22 @@ namespace SteamInventoryMonitor.Task
 
             timer.Start();
         }
+
+        private void NwClicked()
+        {
+            Show();
+            SetupViewMode(2);
+        }
         private void windowClosing(object sender, System.ComponentModel.CancelEventArgs e) => notifyIcon.Visible = false;
-        private void btnNotificationClick(object sender, RoutedEventArgs e) => SetupViewMode(2);
-        private void btnHomeClick(object sender, RoutedEventArgs e) => SetupViewMode(1);
+        private void btnNotificationClick(object sender, RoutedEventArgs e)
+        {
+            Show();
+            SetupViewMode(2);
+        }
+        private void btnHomeClick(object sender, RoutedEventArgs e)
+        {
+            Show();
+            SetupViewMode(1);
+        }
     }
 }
