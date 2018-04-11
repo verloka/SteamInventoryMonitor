@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SteamInventoryMonitor.Models;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,7 +18,7 @@ namespace SteamInventoryMonitor.Views
             DataContext = this;
         }
 
-        public Task<bool> GetUser()
+        public Task<bool> GetUserByLogin()
         {
             return Task.Factory.StartNew(() =>
                 {
@@ -44,6 +45,23 @@ namespace SteamInventoryMonitor.Views
                     return result;
                 });
         }
+        Task<bool> GetUserByID64()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    string url = $"http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={App.KEY}&steamids={App.ID64}";
+
+                    using (WebClient wc = new WebClient())
+                    {
+                        UserInformation ui = JsonConvert.DeserializeObject<UserInformation>(wc.DownloadString(url));
+                        return ui.Success;
+                    }
+                }
+                catch {  return false; }
+            });
+        }
 
         private void PageLoaded(object sender, RoutedEventArgs e)
         {
@@ -54,7 +72,12 @@ namespace SteamInventoryMonitor.Views
         {
             App.MAIN_WINDOW.ShowAnimGrid(true, "searching the user...");
 
-            if (await GetUser())
+            if (Regex.IsMatch(LoginInfo, @"^\d{17}$") && await GetUserByID64())
+            {
+                App.ID64 = LoginInfo;
+                App.MAIN_WINDOW.SetupViewMode(1);
+            }
+            else if (await GetUserByLogin())
                 App.MAIN_WINDOW.SetupViewMode(1);
             else
             {

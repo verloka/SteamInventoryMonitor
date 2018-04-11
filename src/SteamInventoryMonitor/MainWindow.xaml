@@ -127,6 +127,12 @@
                     <MenuItem.Icon>
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE946;" FontSize="12"/>
                     </MenuItem.Icon>
+                    <MenuItem Header="Feedback">
+                        <MenuItem.Icon>
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xED15;" FontSize="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator Background="#FF686868" BorderBrush="#FF686868"/>
                     <MenuItem Header="FAQ">
                         <MenuItem.Icon>
                             <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xF142;" FontSize="16"/>

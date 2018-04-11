@@ -50,19 +50,23 @@ namespace SteamInventoryMonitor.Views
         {
             return Task.Factory.StartNew(() =>
             {
-                int count = 1;
+                int count = 1, rezult = 0;
 
-                string str = $"http://steamcommunity.com/inventory/{Player.steamid}/{appid}/{appcontext}?l={App.LANGUAGE}&count={count}";
-
-                using (WebClient wc = new WebClient())
+                try
                 {
-                    Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
+                    string str = $"http://steamcommunity.com/inventory/{Player.steamid}/{appid}/{appcontext}?l={App.LANGUAGE}&count={count}";
 
-                    if (inv.IsSuccess)
-                        return inv.InventoryCount;
+                    using (WebClient wc = new WebClient())
+                    {
+                        Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
+
+                        if (inv.IsSuccess)
+                            rezult = inv.InventoryCount;
+                    }
                 }
+                catch { rezult = -1; }
 
-                return 0;
+                return rezult;
             });
         }
         Task<Tuple<bool, bool>> SearchItem(string name, string lid = "")
@@ -76,7 +80,10 @@ namespace SteamInventoryMonitor.Views
 
                 using (WebClient wc = new WebClient())
                 {
-                    Inventory inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str));
+                    Inventory inv;
+
+                    try { inv = JsonConvert.DeserializeObject<Inventory>(wc.DownloadString(str)); }
+                    catch { return new Tuple<bool, bool>(false, false); }
 
                     if (inv.IsSuccess)
                     {
@@ -135,10 +142,14 @@ namespace SteamInventoryMonitor.Views
 
                 Inventories = JsonConvert.DeserializeObject<List<InventoryObject>>(File.ReadAllText(App.INVENTORIES));
 
+                int hiden = 0;
+
                 foreach (var item in Inventories)
                 {
                     int c = await GetInventoryItemsCount(item.AppID, item.AppContext);
-                    if (App.MAIN_WINDOW.ShowEmptyInventories || c > 0)
+                    if (c == -1)
+                        hiden++;
+                    else if (App.MAIN_WINDOW.ShowEmptyInventories || c > 0)
                     {
                         InventoryButton ib = new InventoryButton()
                         {
@@ -163,6 +174,9 @@ namespace SteamInventoryMonitor.Views
                         spInventories.Children.Add(ib);
                     }
                 }
+
+                if (hiden == Inventories.Count)
+                    (new MessageWindow("Information", "Possible user profile is hidden or inventory is hidden.", Core.MessageWindowIcon.Info, Core.MessageWindowIconColor.Blue)).ShowDialog();
 
                 App.MAIN_WINDOW.ShowAnimGrid(false, string.Empty);
             }
