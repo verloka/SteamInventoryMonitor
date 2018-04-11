@@ -1,9 +1,11 @@
 ﻿using Microsoft.Win32;
 using Newtonsoft.Json;
+using SteamInventoryMonitor.Core;
 using SteamInventoryMonitor.Model;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -58,6 +60,7 @@ namespace SteamInventoryMonitor
         string AppId = string.Empty;
         int AppCtx = 2;
         bool IsNotFound = false;
+        int currentWindowNumber;
 
         RegSettings rs;
 
@@ -89,9 +92,8 @@ namespace SteamInventoryMonitor
             tbTradableUn.Visibility = Visibility.Collapsed;
 
             IsNotFound = false;
-            gridAdd.Visibility = Visibility.Visible;
 
-            SaveTO();
+            ShowModal(true, ModalWindowType.AddItem);
         }
         public void AddItem(string name, string appid, int apctx)
         {
@@ -114,9 +116,8 @@ namespace SteamInventoryMonitor
             tbTradableUn.Visibility = Visibility.Visible;
 
             IsNotFound = true;
-            gridAdd.Visibility = Visibility.Visible;
 
-            SaveTO();
+            ShowModal(true, ModalWindowType.AddItem);
         }
         public void ShowAnimGrid(bool show, string text)
         {
@@ -125,24 +126,79 @@ namespace SteamInventoryMonitor
         }
         public void SetupViewMode(int modeNumber)
         {
+            currentWindowNumber = modeNumber;
+
             switch (modeNumber)
             {
                 case 0:
                 default:
-                    Width = 520;
-                    Height = 280;
                     frame.Navigate(new Uri("Views/LoginPage.xaml", UriKind.Relative));
                     break;
                 case 1:
+                    frame.Navigate(new Uri("Views/ProfilePage.xaml", UriKind.Relative));
+                    break;
+            }
+
+            SetupWindowSize(currentWindowNumber);
+        }
+        public void SetupWindowSize(int modeNumber)
+        {
+            switch (modeNumber)
+            {
+                case 0:                     //login page
+                default:
+                    Width = 520;
+                    Height = 280;
+                    break;
+                case 1:                     //profile page
                     Width = 640;
                     Height = 540;
-                    frame.Navigate(new Uri("Views/ProfilePage.xaml", UriKind.Relative));
+                    break;
+                case 17:                    //about modal
+                    Width = 570;
+                    Height = 275;
+                    break;
+                case 18:                    //feedback modal
+                    Width = 600;
+                    Height = 540;
+                    break;
+                case 19:                    //add item modal
+                    Width = 640;
+                    Height = 350;
+                    break;
+                case 20:                    //add inventory modal
+                    Width = 570;
+                    Height = 275;
                     break;
             }
         }
         public void SetupTitle(string title, bool full = false) => Title = full ? title : $"Steam Inventory Monitor: {title}";
-        public void ShowAbout(bool show) => gridAbout.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
         public void UpdateStatus() => tbStatus.Text = (TO == null || (TO.Items.Count == 0 && TO.ItemsNF.Count == 0)) ? "empty line" : $"{TO.Items.Count + TO.ItemsNF.Count} items in task";
+        public void ShowModal(bool show, ModalWindowType windowType = ModalWindowType.None)
+        {
+            switch (windowType)
+            {
+                case ModalWindowType.About:
+                    SetupWindowSize(show ? 17 : currentWindowNumber);
+                    break;
+                case ModalWindowType.Feedback:
+                    SetupWindowSize(show ? 18 : currentWindowNumber);
+                    break;
+                case ModalWindowType.AddItem:
+                    SetupWindowSize(show ? 19 : currentWindowNumber);
+                    break;
+                case ModalWindowType.AddInventory:
+                    SetupWindowSize(show ? 20 : currentWindowNumber);
+                    break;
+                default:
+                    SetupWindowSize(currentWindowNumber);
+                    break;
+            }
+
+            gridAbout.Visibility = windowType == ModalWindowType.About && show ? Visibility.Visible : Visibility.Collapsed;
+            gridAdd.Visibility = windowType == ModalWindowType.AddItem && show ? Visibility.Visible : Visibility.Collapsed;
+            gridFeedback.Visibility = windowType == ModalWindowType.Feedback && show ? Visibility.Visible : Visibility.Collapsed;
+        }
 
         async void SaveTO()
         {
@@ -160,12 +216,16 @@ namespace SteamInventoryMonitor
             catch { }
         }
         private void btnCloseWinodwClick(object sender, RoutedEventArgs e) => Close();
-        private void btnInfoClick(object sender, RoutedEventArgs e) => ShowAbout(true);
+        private void btnInfoClick(object sender, RoutedEventArgs e) => ShowModal(true, ModalWindowType.About);
+        private void btnBagClick(object sender, RoutedEventArgs e) => (new MessageWindow("Attention!", "The program is under construction, there may be glitches and bugs, I apologize. If you have any suggestions or complaints, you can send them through the feedback form: Information -> Feedback", MessageWindowIcon.Warning, MessageWindowIconColor.Orange)).ShowDialog();
         #endregion
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
             App.MAIN_WINDOW = this;
+
+            tbVersion.Text = $"Version: {Assembly.GetExecutingAssembly().GetName().Version.Major}.{Assembly.GetExecutingAssembly().GetName().Version.Minor}";
+            tbYear.Text = $"© Verloka Vadim, {DateTime.Now.Year}";
 
             UpdateStatus();
             SetupViewMode(0);
@@ -175,8 +235,8 @@ namespace SteamInventoryMonitor
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
         }
-        private void btnCloseAboutClick(object sender, RoutedEventArgs e) => ShowAbout(false);
-        private void menuItemAboutClick(object sender, RoutedEventArgs e) => ShowAbout(true);
+        private void btnCloseAboutClick(object sender, RoutedEventArgs e) => ShowModal(false);
+        private void menuItemAboutClick(object sender, RoutedEventArgs e) => ShowModal(true, ModalWindowType.About);
         private void menuItemExitClick(object sender, RoutedEventArgs e) => Close();
         private void btnAddClick(object sender, RoutedEventArgs e)
         {
@@ -199,7 +259,9 @@ namespace SteamInventoryMonitor
                 TO.Items.Add(TI);
             }
 
-            gridAdd.Visibility = Visibility.Collapsed;
+            ShowModal(false);
+            SaveTO();
+
             App.MAIN_WINDOW.UpdateStatus();
         }
         private void tbValuePreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -208,5 +270,8 @@ namespace SteamInventoryMonitor
                 e.Handled = true;
         }
         private void menuItemShowTaskClick(object sender, RoutedEventArgs e) => Process.Start($"{Directory.GetCurrentDirectory()}/SteamInventoryMonitor.Task.exe", "-pw");
+        private void btnCancelAddClick(object sender, RoutedEventArgs e) => ShowModal(false);
+        private void btnCancelFeedBackClick(object sender, RoutedEventArgs e) => ShowModal(false);
+        private void menuItemFeedbackClick(object sender, RoutedEventArgs e) => ShowModal(true, ModalWindowType.Feedback);
     }
 }

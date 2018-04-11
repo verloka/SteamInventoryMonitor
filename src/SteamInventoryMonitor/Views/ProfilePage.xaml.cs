@@ -176,7 +176,7 @@ namespace SteamInventoryMonitor.Views
                 }
 
                 if (hiden == Inventories.Count)
-                    (new MessageWindow("Information", "Possible user profile is hidden or inventory is hidden.", Core.MessageWindowIcon.Info, Core.MessageWindowIconColor.Blue)).ShowDialog();
+                    (new MessageWindow("Information", "Possible user profile is hidden or inventory is hidden.", Core.MessageWindowIcon.Error, Core.MessageWindowIconColor.Red)).ShowDialog();
 
                 App.MAIN_WINDOW.ShowAnimGrid(false, string.Empty);
             }

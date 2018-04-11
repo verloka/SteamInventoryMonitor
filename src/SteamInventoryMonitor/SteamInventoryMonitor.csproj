@@ -80,6 +80,7 @@
     <Compile Include="Core\BoolToCollapsedConvert.cs" />
     <Compile Include="Core\MessageWindowIcon.cs" />
     <Compile Include="Core\MessageWindowIconColor.cs" />
+    <Compile Include="Core\ModalWindowType.cs" />
     <Compile Include="MessageWindow.xaml.cs">
       <DependentUpon>MessageWindow.xaml</DependentUpon>
     </Compile>

@@ -60,7 +60,7 @@
                 </Grid.ColumnDefinitions>
                 <Image Grid.Column="0" Source="{Binding ElementName=window, Path=Icon}" Margin="6"/>
                 <TextBlock Grid.Column="1" Text="{Binding ElementName=window, Path=Title, FallbackValue=window}" Foreground="#FFF0EFF1" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Center" FontSize="14"/>
-                <Button x:Name="btnBag" Grid.Column="2" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnInfoClick" >
+                <Button x:Name="btnBag" Grid.Column="2" Width="35" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnBagClick" >
                     <TextBlock x:Name="textBlock" FontFamily="Segoe MDL2 Assets" Text="&#xF1AD;" FontSize="14" Foreground="#FFFFCC00" RenderTransformOrigin="0.5,1">
                         <TextBlock.RenderTransform>
                             <TransformGroup>
@@ -127,7 +127,7 @@
                     <MenuItem.Icon>
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE946;" FontSize="12"/>
                     </MenuItem.Icon>
-                    <MenuItem Header="Feedback">
+                    <MenuItem x:Name="menuItemFeedback" Header="Feedback" Click="menuItemFeedbackClick">
                         <MenuItem.Icon>
                             <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xED15;" FontSize="16"/>
                         </MenuItem.Icon>
@@ -199,12 +199,24 @@
                         <TextBlock Text="in inventory" FontSize="16" Foreground="#FFC5C5C5" VerticalAlignment="Center" Margin="20,0,0,0"/>
                     </StackPanel>
                 </StackPanel>
-                <Button x:Name="btnAdd" Grid.Column="1" Margin="15" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="btnAddClick">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="Add to Task"/>
-                    </StackPanel>
-                </Button>
+                <Grid Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="btnCancel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="btnCancelAddClick" Grid.Column="0" Width="150">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE711;" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Cancel"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="btnAdd"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="btnAddClick" Grid.Column="1" Width="150">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7C4;" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Add to Task"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
             </Grid>
             <Grid x:Name="gridAbout" Grid.Row="1" Grid.RowSpan="2" Background="#FF2D2D30" Visibility="Collapsed">
                 <Grid.RowDefinitions>
@@ -215,21 +227,67 @@
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Grid.Row="0" Source="Icons/chevron.ico" Width="128" Height="128" VerticalAlignment="Top" Margin="15,15,15,10"/>
-                <StackPanel Grid.Column="1" Grid.Row="0" Margin="10,20,20,20">
+                <Image Grid.Column="0" Grid.Row="0" Source="Icons/chevron.ico" Width="128" Height="128" VerticalAlignment="Top" Margin="25,25,15,10"/>
+                <StackPanel Grid.Column="1" Grid.Row="0" Margin="10,30,20,20">
                     <TextBlock Text="Steam Inventory Monitor" Foreground="#FFC5C5C5" FontSize="18"/>
                     <TextBlock Text="Application 'spy' for items in inventories of users of Steam" Foreground="#FFC5C5C5" FontSize="14" TextWrapping="Wrap"/>
-                    <TextBlock Text="Version: 18.3" Foreground="#FFC5C5C5" FontSize="14" Margin="0,10,0,0"/>
+                    <TextBlock x:Name="tbVersion" Text="Version: 18.3" Foreground="#FFC5C5C5" FontSize="14" Margin="0,10,0,0"/>
                     <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
                         <TextBlock Text="Author: " Foreground="#FFC5C5C5" FontSize="14" />
                         <TextBlock FontSize="14">
                             <Hyperlink NavigateUri="https://verloka.github.io/" Foreground="#FF7CB479" RequestNavigate="Hyperlink_RequestNavigate">Verloka Vadim</Hyperlink>
                         </TextBlock>
                     </StackPanel>
-                    <TextBlock Text="© Verloka Vadim, 2018" Foreground="#FFC5C5C5" FontSize="14" Margin="0,3,0,0"/>
+                    <TextBlock x:Name="tbYear" Text="© Verloka Vadim, 2018" Foreground="#FFC5C5C5" FontSize="14" Margin="0,3,0,0"/>
                     <TextBlock Text="All rights reserved" Foreground="#FFC5C5C5" FontSize="14" Margin="0,3,0,0"/>
                 </StackPanel>
-                <Button x:Name="btnCloseAbout" Content="Close" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,5,5,10" Click="btnCloseAboutClick"/>
+                <Button x:Name="btnCloseAbout" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="btnCloseAboutClick" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Width="150" Margin="0,0,0,10">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE711;" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Close"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+            <Grid x:Name="gridFeedback" Grid.Row="1" Grid.RowSpan="2" Background="#FF2D2D30" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <TextBlock Text="Your name" FontSize="18" Foreground="#FFC5C5C5" Margin="15,5,0,5" TextWrapping="NoWrap"/>
+                    <TextBlock Text="*" FontSize="18" Foreground="#EF5350" TextWrapping="NoWrap"/>
+                </StackPanel>
+                <TextBox x:Name="tbUserName" Grid.Row="1" Margin="7" TextWrapping="NoWrap"/>
+                <TextBlock Text="Your e-mail" FontSize="18" Grid.Row="2" Foreground="#FFC5C5C5" Margin="15,5,5,5" TextWrapping="NoWrap"/>
+                <TextBox x:Name="tbUserMail" Grid.Row="3" Margin="7" TextWrapping="NoWrap"/>
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <TextBlock Text="Your message" FontSize="18" Foreground="#FFC5C5C5" Margin="15,5,0,5" TextWrapping="NoWrap"/>
+                    <TextBlock Text="*" FontSize="18" Foreground="#EF5350" TextWrapping="NoWrap"/>
+                </StackPanel>
+                <TextBox x:Name="tbUserMessage" Grid.Row="5" Margin="7" TextWrapping="Wrap" AcceptsReturn="True"/>
+                <Grid Grid.Row="6" Margin="0,10,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="btnCancelFeedBack" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="btnCancelFeedBackClick" Grid.Column="0" Width="150">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE711;" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Cancel"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="btnSendFeeback" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="btnCancelAddClick" Grid.Column="1" Width="150">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE724;" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Send message"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
             </Grid>
         </Grid>
     </Border>
